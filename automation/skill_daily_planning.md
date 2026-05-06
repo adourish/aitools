@@ -2,8 +2,8 @@
 
 **Fully Autonomous Holistic Daily Planning: Gmail + Calendar + Todoist → Prioritized Daily Plan**
 
-**Last Updated:** April 9, 2026
-**Version:** 3.0.0 - AI Thread Analysis with Content Quality
+**Last Updated:** May 6, 2026
+**Version:** 3.1.0 - Claude AI + Sign-up Filtering
 
 ## Quick Reference
 **Use when:** Morning planning session; need a prioritized action list pulled from email/calendar/tasks
@@ -38,7 +38,7 @@ Gmail (30 days) + Calendar (7 days) + Todoist
   └─────┬──────┘
         │ ~13 clustered groups
   ┌─────┴──────┐
-  │ AI         │  OpenRouter (gpt-4o-mini) per thread:
+  │ AI         │  OpenRouter (claude-sonnet-4-6) per thread:
   │ Analysis   │  → ACTION ITEMS, DEADLINE (YYYY-MM-DD), PRIORITY,
   │            │  → CONTEXT (specific, not filler), FOLLOW_UP
   └─────┬──────┘
@@ -67,7 +67,7 @@ Todoist Tasks                    Amplenote Note
 ### Key Files
 
 | File | Purpose |
-|------|---------|
+|------|-------|
 | `_automation/run_process_new_v2.py` | Main orchestrator — all 9 steps |
 | `_automation/gmail_tools.py` | Gmail fetch, sender filtering, priority keywords |
 | `_automation/gmail_thread_tools.py` | Thread grouping, priority scoring, clustering |
@@ -126,14 +126,12 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 
 **Inputs:**
 - 📧 **Gmail emails** (past 1 month) - personal email, intelligent filtering
-- � **Google Calendar events** (next 7 days) - upcoming meetings and appointments
+- 📅 **Google Calendar events** (next 7 days) - upcoming meetings and appointments
 - 📋 **Todoist tasks** - active tasks with priorities
 - 📄 **Google Drive documents** - recently modified files (last 7 days)
-- � **Outlook/Microsoft 365 emails** (past 1 month) - work email (requires admin approval)
-- �📄 **SharePoint documents** - recently accessed work files (requires admin approval)
 
 **Intelligent Processing:**
-- 🧠 **AI-powered email analysis** - Detects actionable items vs spam/newsletters
+- 🧠 **AI-powered email analysis** - Detects actionable items vs spam/newsletters/sign-ups
 - 🎯 **Deadline extraction** - Parses due dates from natural language
 - ✅ **Auto-creates tasks in BOTH Todoist AND Amplenote** - For emails requiring action
 - 📝 **Auto-creates Amplenote notes** - For important reference info (non-actionable)
@@ -143,17 +141,17 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 - 🎯 **Action-Priority Daily Plan** with sections:
   - 🎯 **DO NOW** - Urgent & important (due today/tomorrow, high priority)
   - ⏰ **DO SOON** - Important (due this week, medium priority)
-  - � **MONITOR** - Awareness items (no immediate action needed)
+  - 📊 **MONITOR** - Awareness items (no immediate action needed)
   - 📌 **REFERENCE** - Important info saved (account numbers, confirmations)
-  - � **CONTEXT** - Recent documents and email summary
+  - 📄 **CONTEXT** - Recent documents and email summary
 - 📝 **Reference email notes** - Auto-created in Amplenote for important info
-- � **Daily plan JSON** - Saved for Amplenote sync
+- 📊 **Daily plan JSON** - Saved for Amplenote sync
 
 ### Key Features
 
 ✅ **Fully Autonomous Authentication** - Auto-refreshes tokens, triggers OAuth when needed, zero user prompts  
 ✅ **Gmail + Calendar Integration** - Scans 1 month of emails + 7 days of calendar events  
-✅ **Smart Filtering** - Removes political emails, newsletters, shipping notifications automatically  
+✅ **Smart Filtering** - Removes sign-ups, political emails, newsletters, shipping notifications automatically  
 ✅ **Reference Email Detection** - Auto-saves emails with account numbers, confirmations, credentials  
 ✅ **Action-Priority Categorization** - DO NOW/DO SOON/MONITOR (not time-based)  
 ✅ **Calendar Event Integration** - Meetings and appointments included in daily plan  
@@ -162,7 +160,7 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 ✅ **Intelligent Prioritization** - Analyzes urgency, deadlines, and importance  
 ✅ **Deduplication** - Removes duplicate items across sources  
 ✅ **Daily Refresh** - Generate new plan each day with updated priorities  
-✅ **Zero Configuration** - Just run `python daily_planner.py` - everything else is automatic
+✅ **Zero Configuration** - Just run `python run_process_new_v2.py` - everything else is automatic
 
 ### CRITICAL: Todoist vs Amplenote
 
@@ -184,16 +182,11 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 - Gmail (1 month of emails) - OAuth auto-handled
 - Google Calendar (7 days of events) - OAuth auto-handled
 - Google Drive (7 days of documents) - OAuth auto-handled
-- Todoist (all active tasks) - API token in environments.json
-
-**❌ REQUIRES ADMIN APPROVAL:**
-- Microsoft 365 Outlook (work email) - Blocked by organization policy
-- SharePoint (work documents) - Blocked by organization policy
+- Todoist (all active tasks) - API token in credential store
 
 **OAuth Credentials Location:**
 - Gmail/Calendar/Drive: `G:\My Drive\03_Areas\Keys\Gmail\credentials.json`
 - Gmail Token: `G:\My Drive\03_Areas\Keys\Gmail\token.json` (auto-refreshed)
-- Microsoft 365: `G:\My Drive\03_Areas\Keys\Microsoft365\` (requires IT approval)
 
 **OAuth Scopes:**
 ```python
@@ -225,7 +218,7 @@ GMAIL_SCOPES = [
 
 **Workflow (100% Autonomous):**
 1. **Auto-authenticate** → Gmail/Calendar/Drive OAuth (auto-refresh or trigger new flow)
-2. **Scan Gmail** → 1 month of emails, filter out political/newsletter/shipping
+2. **Scan Gmail** → 1 month of emails, filter out sign-ups, political/newsletter/shipping
 3. **Detect reference emails** → Auto-save account numbers, confirmations to Amplenote
 4. **Scan Calendar** → Next 7 days of events
 5. **Fetch Todoist** → All active tasks
@@ -242,29 +235,30 @@ GMAIL_SCOPES = [
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │            HOLISTIC DAILY PLANNER SYSTEM                     │
-│         (Personal + Work Combined View)                      │
+│         (Personal View — Gmail + Calendar + Todoist)         │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │     1. Data Collection (daily_planner.py)│
+        │     1. Data Collection                  │
         └─────────────────────────────────────────┘
                               │
-        ┌─────────┬───────────┼───────────┬─────────┬─────────┐
-        │         │           │           │         │         │
-        ▼         ▼           ▼           ▼         ▼         ▼
-   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-   │ Gmail  │ │Outlook │ │Todoist │ │ Google │ │SharePt │ │Calendar│
-   │  API   │ │MS Graph│ │ API v1 │ │ Drive  │ │MS Graph│ │(Future)│
-   │Personal│ │  Work  │ │ Tasks  │ │  Docs  │ │  Docs  │ │        │
-   └────────┘ └────────┘ └────────┘ └────────┘ └────────┘ └────────┘
-        │         │           │           │         │         │
-        └─────────┴───────────┴───────────┴─────────┴─────────┘
+        ┌─────────────────────┼───────────┬─────────┐
+        │                     │           │         │
+        ▼                     ▼           ▼         ▼
+   ┌────────┐           ┌────────┐ ┌────────┐ ┌────────┐
+   │ Gmail  │           │Todoist │ │ Google │ │Calendar│
+   │  API   │           │ API v1 │ │ Drive  │ │        │
+   │Personal│           │ Tasks  │ │  Docs  │ │        │
+   └────────┘           └────────┘ └────────┘ └────────┘
+        │                     │           │         │
+        └─────────────────────┴───────────┴─────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
         │     2. Smart Filtering & Prioritization  │
         │     - Skip spam/shipping notifications   │
+        │     - Skip sign-ups and subscriptions    │
         │     - Detect urgency indicators          │
         │     - Extract due dates                  │
         │     - Remove duplicates                  │
@@ -273,30 +267,19 @@ GMAIL_SCOPES = [
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │     3. Time-Based Categorization         │
-        │     - Today (due today or overdue)       │
-        │     - Tomorrow (due tomorrow)            │
-        │     - This Week (due within 7 days)      │
-        │     - Backlog (no deadline or later)     │
-        │     - Documents (recent activity)        │
+        │     3. AI Analysis (claude-sonnet-4-6)   │
+        │     - Action item extraction             │
+        │     - Deadline parsing                   │
+        │     - Priority classification            │
+        │     - Context summarization              │
         └─────────────────────────────────────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
-        │     4. Holistic Kanban Board Generation  │
-        │     (sync_plan_to_amplenote.js)          │
-        │     - Create/Update daily Amplenote note │
-        │     - Add tasks (personal + work)        │
-        │     - Add document tracking section      │
-        │     - Add email summary section          │
-        │     - Include due dates & priorities     │
-        └─────────────────────────────────────────┘
-                              │
-                              ▼
-        ┌─────────────────────────────────────────┐
-        │     5. Daily Kanban Board in Amplenote   │
-        │     ✅ Check off completed tasks         │
-        │     🔄 Refresh daily for new priorities  │
+        │     4. Output Generation                 │
+        │     - Todoist tasks (push results)       │
+        │     - Amplenote daily note               │
+        │     - JSON plan file                     │
         └─────────────────────────────────────────┘
 ```
 
@@ -316,19 +299,18 @@ python run_process_new_v2.py
 
 **What Happens:**
 
-1. **Dual Email Collection** (30-45 seconds)
-   - Scans Gmail (last 2 days) for actionable items
-   - Scans Outlook/Microsoft 365 (last 2 days) for work emails
+1. **Email Collection** (30-45 seconds)
+   - Scans Gmail (last 30 days) for actionable items
    - Fetches active Todoist tasks
-   - Filters out spam, newsletters, automated alerts
+   - Filters out spam, newsletters, sign-ups, automated alerts
 
 2. **Intelligent Email Analysis** (15-20 seconds)
    - **Actionable vs Reference**: Classifies emails requiring action vs info-only
    - **Deadline extraction**: Parses "by Friday", "due tomorrow", "end of week"
    - **Urgency detection**: Identifies urgent, asap, deadline, today keywords
    - **Sender importance**: Prioritizes real people over automated systems
-   - **Spam filtering**: Skips newsletters, marketing, social media, tracking
-   - **Deduplication**: Removes duplicate items across Gmail, Outlook, Todoist
+   - **Spam filtering**: Skips newsletters, marketing, social media, tracking, sign-ups
+   - **Deduplication**: Removes duplicate items across Gmail and Todoist
 
 3. **Auto-Task/Note Creation** (10-15 seconds)
    - **Creates tasks in BOTH Todoist AND Amplenote** for actionable emails
@@ -343,13 +325,12 @@ python run_process_new_v2.py
 
 5. **Board Creation** (45 seconds)
    - Creates/updates daily Amplenote note
-   - Adds tasks with checkboxes (personal + work)
+   - Adds tasks with checkboxes
    - Includes due dates and priorities
    - Adds "📄 Documents in Progress" section
-   - Shows Google Drive + SharePoint recent files
+   - Shows Google Drive recent files
    - Adds "📧 Email Summary" section
    - Highlights newly created tasks from emails
-   - Generates usage instructions
 
 **Result:** A clean, prioritized Kanban board showing exactly what you need to focus on.
 
@@ -370,6 +351,7 @@ python run_process_new_v2.py
 - ❌ **Newsletters**: Substack, Medium, Mailchimp, Constant Contact
 - ❌ **Community**: PTA, HOA, rescue alerts, community bulletins
 - ❌ **Subscriptions**: Streaming services, app updates, software notifications
+- ❌ **Sign-ups**: Subscription confirmations, welcome emails, account activations, registration confirmations, "thanks for signing up"
 - ❌ **Receipts (unless flagged)**: Purchase confirmations without action needed
 
 **Sender Domain Patterns to Skip:**
@@ -381,13 +363,14 @@ skip_domains = [
     'linkedin.com', 'twitter.com', 'x.com',
     'usps.com', 'fedex.com', 'ups.com',
     'creditkarma.com', 'mint.com', 'bankofamerica.com',
-    'substack.com', 'medium.com', 'mailchimp.com'
+    'substack.com', 'medium.com', 'mailchimp.com',
+    'signup@', 'subscribe@', 'subscriptions@',
+    'registration@', 'welcome@', 'activate@',
 ]
 ```
 
 **Always Included (Actionable Patterns):**
 - ✅ **Real People**: Emails from colleagues, clients, family (personal names)
-- ✅ **Work Domains**: @reisystems.com, @company.com (your work domain)
 - ✅ **Important Services**: DMV, IRS, school, healthcare, government
 - ✅ **Action Required**: Contains "please review", "need you to", "can you"
 - ✅ **Deadline Indicators**: "by [date]", "due [date]", "deadline"
@@ -469,24 +452,10 @@ meeting_patterns = [
 4. **No corresponding Todoist task** exists
 5. **Email is 1-2 days old** (not brand new, not too old)
 
-**Output:**
-```
-🚨 POTENTIALLY MISSED ITEMS (3)
-
-⚠️ "Review Q1 budget" - From: manager@company.com (2 days ago)
-   Deadline: by Friday | Action: "please review and provide feedback"
-   → No Todoist task found. Create task?
-
-⚠️ "Submit expense report" - From: hr@company.com (1 day ago)  
-   Deadline: end of week | Action: "please submit your expenses"
-   → No Todoist task found. Create task?
-```
-
 ### Deduplication
 
 Items are deduplicated across all sources:
 - **Gmail**: "Review Q1 budget by Friday"
-- **Outlook**: "RE: Review Q1 budget"
 - **Todoist**: "Review Q1 budget"
 - **Result:** Single task in Today section (keeps most detailed version)
 
@@ -503,32 +472,12 @@ Items are deduplicated across all sources:
 
 **Purpose:** Focus here first. These are your most critical items.
 
-**Example:**
-```
-🔥 Today (5 items)
-
-⚡ Review Q1 budget - Email from manager@company.com
-⚡ Submit expense report - Todoist
-• Respond to client inquiry - Email from client@company.com
-• Vehicle registration renewal - Email from DMV
-• Conference scheduling - Todoist
-```
-
 ### 📅 Tomorrow Section
 
 **Criteria:**
 - Due date is tomorrow
 
 **Purpose:** Plan ahead. Review these to prepare for tomorrow.
-
-**Example:**
-```
-📅 Tomorrow (3 items)
-
-• Team meeting prep - Todoist
-• Send project update - Email from project-lead@company.com
-• Review contract - Todoist
-```
 
 ### 📆 This Week Section
 
@@ -537,16 +486,6 @@ Items are deduplicated across all sources:
 - After tomorrow but before next week
 
 **Purpose:** Keep on radar. Don't forget about these.
-
-**Example:**
-```
-📆 This Week (4 items)
-
-• Complete training module - Todoist
-• Schedule dentist appointment - Email reminder
-• Review performance goals - Todoist
-• Submit timesheet - Email from HR
-```
 
 ### 📦 Backlog Section
 
@@ -557,16 +496,6 @@ Items are deduplicated across all sources:
 
 **Purpose:** Important but not urgent. Review weekly.
 
-**Example:**
-```
-📦 Backlog (8 items)
-
-• Research vacation destinations - Todoist
-• Update resume - Todoist
-• Organize photos - Todoist
-... and 5 more items
-```
-
 ---
 
 ## Running the Daily Planner
@@ -574,131 +503,75 @@ Items are deduplicated across all sources:
 ### First-Time Setup
 
 **Prerequisites:**
-- ✅ Gmail OAuth configured (from email processing setup)
-- ✅ Todoist API token in environments.json
-- ✅ Amplenote OAuth token on Desktop
+- ✅ Gmail OAuth configured
+- ✅ Todoist API token in credential store
+- ✅ Amplenote OAuth token
 - ✅ Python 3.7+ installed
-- ✅ Node.js installed
+- ✅ OpenRouter API key in credential store (for claude-sonnet-4-6)
 
 **Verify Setup:**
 ```powershell
-# Check Gmail authentication
-python email_processor.py --auth
+# Navigate to automation folder
+cd "G:\My Drive\06_Skills\_automation"
 
-# Check Todoist connection
-# (Todoist token should be in environments.json)
+# Install dependencies
+pip install -r requirements.txt
 
-# Check Amplenote token
-# (Should exist at C:\Users\[username]\Desktop\amplenote_token.json)
+# Run the daily planner
+python run_process_new_v2.py
 ```
 
 ### Daily Usage
 
 **Morning Routine:**
 ```powershell
-cd "G:\My Drive\06_Master_Guides\Scripts"
-
-# Step 1: Generate plan
-python daily_planner.py
-
-# Step 2: Create Kanban board
-node sync_plan_to_amplenote.js
+cd "G:\My Drive\06_Skills\_automation"
+python run_process_new_v2.py
 ```
 
 **Expected Output:**
 ```
-╔════════════════════════════════════════════════════════════╗
-║         Email Intelligence - Processing Inbox              ║
-╚════════════════════════════════════════════════════════════╝
+================================================================================
+COMPREHENSIVE PROCESS NEW WORKFLOW - V2
+Analyzing email threads over 30 days with full context
+================================================================================
 
-📧 Scanning Gmail (last 2 days)...
-   Total emails: 47
-   Filtered spam/newsletters: 38
-   Actionable items: 5
-   Reference items: 4
+📧 STEP 1: Fetching email threads (30 day lookback)...
+   Found 49 total threads
 
-📧 Scanning Outlook (last 2 days)...
-   Total emails: 23  
-   Filtered spam/newsletters: 15
-   Actionable items: 6
-   Reference items: 2
+🎯 STEP 2: Identifying priority threads...
+   Selected 15 priority threads for analysis
 
-✅ Auto-created Todoist tasks: 8
-📝 Auto-created Amplenote notes: 3
-🚨 Potentially missed items: 2
+🔗 STEP 2.5: Clustering related threads by sender...
+   Clustered 15 threads into 13 groups
 
-📋 Fetching existing Todoist tasks...
-   Found 12 active tasks
+🔍 STEP 3: Analyzing threads comprehensively...
+   Analyzing thread 1/13: Field Trip Permission Slip
+      - 2 emails in thread
+      - Latest from: school@fcps.edu
+      ✓ Priority: HIGH
+      ✓ Action items: 1
+      ✓ Follow-up needed: NO
 
-✨ Total unique items: 20 (deduplicated)
+✅ STEP 4: Fetching Todoist tasks...
+   Found 5 tasks due today
+   Found 8 upcoming tasks
+   Found 2 STALE tasks (>7 days overdue)
 
-💾 Plan saved to: daily_plan_20260222.json
+📅 STEP 5: Fetching calendar events...
+   Found 3 events today, 2 tomorrow
+   Found 12 events in next 7 days
 
-============================================================
-DAILY PLAN SUMMARY
-============================================================
-🔥 Today (5 items):
-   ⚡ Review Q1 budget by Friday
-   ⚡ Submit expense report
-   • Respond to client inquiry
-   • Vehicle registration renewal
-   • Conference scheduling
+📝 STEP 6: Creating comprehensive daily summary...
 
-📅 Tomorrow (3 items):
-   • Team meeting prep
-   • Send project update
-   • Review contract
+📋 STEP 8: Creating individual Todoist tasks...
+   ✅ Created 7 total tasks
 
-📆 This Week (4 items):
-   • Complete training module
-   • Schedule dentist appointment
-   • Review performance goals
-
-📦 Backlog: 3 items
-
-============================================================
-Next: Run sync_plan_to_amplenote.js to create Kanban board
-============================================================
-```
-
-Then:
-```
-╔════════════════════════════════════════════════════════════╗
-║         Creating Kanban Board in Amplenote                ║
-╚════════════════════════════════════════════════════════════╝
-
-📄 Loading: daily_plan_20260222.json
-
-📝 Creating Kanban board...
-✅ Created: abc123-def456-ghi789
-   URL: https://www.amplenote.com/notes/abc123-def456-ghi789
-
-🔥 Adding 5 items to Today...
-   ✅ Review Q1 budget by Friday...
-   ✅ Submit expense report...
-   ...
-
-╔════════════════════════════════════════════════════════════╗
-║       ✅ Kanban Board Created!                             ║
-╚════════════════════════════════════════════════════════════╝
-
-📝 Daily Plan Note:
-   Daily Plan - Saturday, February 22, 2026
-   https://www.amplenote.com/notes/abc123-def456-ghi789
-
-📊 Summary:
-   🔥 Today: 5 items
-   📅 Tomorrow: 3 items
-   📆 This Week: 4 items
-   📦 Backlog: 3 items
-
-🎯 Next Steps:
-   1. Open the note in Amplenote
-   2. Check off tasks as you complete them
-   3. Run again to refresh (updates same note)
-   4. Tomorrow: New date = new note
-
-**Important:** Daily plans are updated and reused, not created fresh each time. This means that your daily plan note will be updated with new information each day, and you should not create a new note for each day. This approach helps to keep your notes organized and makes it easier to track your progress over time.
+📝 STEP 9: Updating Amplenote daily note...
+   ✅ Amplenote daily note updated successfully
+================================================================================
+COMPREHENSIVE ANALYSIS COMPLETE
+================================================================================
 ```
 
 ---
@@ -710,8 +583,7 @@ Then:
 **In Amplenote:**
 1. Open your daily plan note
 2. Check off tasks as you complete them ✅
-3. Completed tasks move to "Completed" section automatically
-4. Add quick notes or updates to tasks as needed
+3. Add quick notes or updates to tasks as needed
 
 **Adding New Tasks:**
 - Add directly to Todoist (will appear in tomorrow's plan)
@@ -728,11 +600,6 @@ Then:
 - ❌ No longer needed? Delete from Todoist
 - 📅 Need new due date? Update in Todoist
 
-**Plan for Tomorrow:**
-- Check Tomorrow section
-- Add any new tasks to Todoist
-- Set priorities for next day
-
 ### Next Morning
 
 **Generate Fresh Board:**
@@ -740,13 +607,6 @@ Then:
 cd "G:\My Drive\06_Skills\_automation"
 python run_process_new_v2.py
 ```
-
-**Benefits of Daily Refresh:**
-- ✅ New urgent emails included
-- ✅ Updated Todoist tasks
-- ✅ Items automatically move between sections based on due dates
-- ✅ Yesterday's completed items archived
-- ✅ Clean slate with current priorities
 
 ---
 
@@ -767,16 +627,12 @@ python run_process_new_v2.py
 - Work through Today section before moving to Tomorrow
 - Don't worry about Backlog until Today is clear
 
-**Goal:** Complete all Today items before end of day.
-
 ### 3. Keep Todoist Updated
 
 **Throughout Day:**
 - Add new tasks as they come up
 - Mark tasks complete in Todoist (not just Amplenote)
 - Update due dates when priorities change
-
-**Why:** Tomorrow's board will reflect these changes.
 
 ### 4. Weekly Backlog Review
 
@@ -785,8 +641,6 @@ python run_process_new_v2.py
 - Delete tasks no longer relevant
 - Promote important items by adding due dates
 - Break down large tasks into smaller ones
-
-**Goal:** Keep backlog under 20 items.
 
 ### 5. Don't Create Tasks for Everything
 
@@ -799,22 +653,8 @@ python run_process_new_v2.py
 - ❌ FYI emails (just read and archive)
 - ❌ Automated notifications (bank alerts, tracking)
 - ❌ Marketing emails (unsubscribe instead)
+- ❌ Sign-up confirmations and welcome emails
 - ❌ Things you'll remember anyway
-
-**Remember:** The system already filters out unimportant emails. Trust the filtering.
-
-### 6. Use Amplenote Features
-
-**While working on tasks:**
-- Add notes or context to task items
-- Link related notes
-- Use tags for categorization
-- Set reminders for time-sensitive items
-
-**Board is your workspace:**
-- Not just a checklist
-- Add details, thoughts, progress notes
-- Reference information as needed
 
 ---
 
@@ -825,26 +665,26 @@ python run_process_new_v2.py
 **Symptom:** "Found 0 urgent items from emails"
 
 **Causes:**
-- No emails in past 2 days with urgency keywords
+- No emails in past 30 days with urgency keywords
 - All emails from filtered senders
 - Gmail token expired
 
 **Solutions:**
 1. Check if you actually have urgent emails
-2. Review skip_senders list in daily_planner.py
-3. Re-authenticate Gmail: `python email_processor.py --auth`
+2. Review skip_senders list in `gmail_tools.py`
+3. Re-authenticate Gmail: delete `token.json` and rerun
 
 ### Todoist Tasks Not Appearing
 
 **Symptom:** "Found 0 active tasks" but you have tasks in Todoist
 
 **Causes:**
-- Todoist API token incorrect
+- Todoist API token incorrect in credential store
 - All tasks are low priority with no due dates (filtered out)
 - Network connection issue
 
 **Solutions:**
-1. Verify Todoist token in environments.json
+1. Verify Todoist token in credential store
 2. Add due dates or priorities to important tasks
 3. Check internet connection
 
@@ -856,36 +696,22 @@ python run_process_new_v2.py
 
 **Solution:**
 ```powershell
-cd C:\Users\[username]\Desktop
+cd "G:\My Drive\06_Master_Guides\Scripts"
 node refresh_amplenote_token.js
 ```
 
-Then retry sync.
+Then retry.
 
-### Duplicate Tasks Appearing
+### AI Analysis Fails
 
-**Symptom:** Same task appears multiple times
+**Symptom:** Fallback analysis used instead of AI results
 
-**Cause:** Title differs slightly between sources
+**Cause:** OpenRouter key missing or API error
 
 **Solution:**
-- Deduplication only works on exact title matches
-- Manually delete duplicates in Amplenote
-- Keep task titles consistent across sources
-
-### Too Many Items in Today
-
-**Symptom:** 20+ items in Today section
-
-**Causes:**
-- Too many high priority tasks in Todoist
-- Many overdue items
-- Urgency detection too aggressive
-
-**Solutions:**
-1. Review Todoist priorities - not everything is urgent
-2. Clear out old overdue tasks
-3. Adjust urgency keywords in daily_planner.py if needed
+1. Verify OpenRouter API key in credential store
+2. Check OpenRouter service status
+3. Review logs for specific error
 
 ---
 
@@ -893,7 +719,7 @@ Then retry sync.
 
 ### Customizing Urgency Keywords
 
-Edit `daily_planner.py`:
+Edit `gmail_tools.py`:
 
 ```python
 is_urgent = any(word in text for word in [
@@ -908,21 +734,15 @@ is_urgent = any(word in text for word in [
 
 **Change email lookback period:**
 ```python
-# In daily_planner.py, change days parameter:
-email_items = self.get_urgent_emails(days=3)  # Look back 3 days instead of 2
-```
-
-**Change week definition:**
-```python
-# In categorize_by_timeframe method:
-end_of_week = today + timedelta(days=10)  # Extend "this week" to 10 days
+# In run_process_new_v2.py, change days parameter:
+all_threads = await thread_tools.get_thread_emails(days=14)  # Look back 14 days
 ```
 
 ### Adding Custom Filters
 
 **Skip specific senders:**
 ```python
-# Add to skip_senders list in daily_planner.py:
+# Add to skip_senders list in gmail_tools.py:
 self.skip_senders = [
     'tiktok.com',
     'your-custom-sender@example.com',  # Add here
@@ -930,26 +750,14 @@ self.skip_senders = [
 ]
 ```
 
-### Limiting Backlog Items
-
-Edit `sync_plan_to_amplenote.js`:
-
-```javascript
-// Change backlog limit:
-for (const item of plan.backlog.slice(0, 20)) {  // Show 20 instead of 10
-```
-
-### Integration with Google Calendar
-
-**Future Enhancement:**
-
+**Skip specific keywords:**
 ```python
-# Add to daily_planner.py:
-def get_calendar_events(self):
-    """Get events from Google Calendar"""
-    # Fetch today's and tomorrow's events
-    # Add to plan as time-specific items
-    pass
+# Add to skip_keywords list in gmail_tools.py:
+self.skip_keywords = [
+    'shipped', 'delivered',
+    'your-custom-keyword',  # Add here
+    # ... rest of list
+]
 ```
 
 ---
@@ -973,9 +781,8 @@ cd "G:\My Drive\06_Skills\_automation"
 # Install/update dependencies
 pip install -r requirements.txt
 
-# View latest daily plan
-cd daily_plans
-dir | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+# View latest output
+dir output | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 ```
 
 ### Authentication Issues
@@ -984,61 +791,6 @@ dir | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 # Re-authenticate Gmail (delete token to trigger OAuth)
 Remove-Item "G:\My Drive\03_Areas\Keys\Gmail\token.json"
 python run_process_new_v2.py
-
-# Check Todoist/Amplenote tokens
-notepad "G:\My Drive\03_Areas\Keys\Environments\environments.json"
-```
-
----
-
-## Example Daily Plan
-
-### Sample Output in Amplenote
-
-```markdown
-# 📋 Daily Plan - Saturday, February 22, 2026
-
-**Generated:** 2/22/2026, 8:30:15 AM
-**Total Items:** 15
-
-## 🔥 Today
-**5 items** - Focus on these first
-
-☑️ ⚡ Review Q1 budget by Friday - Email from manager@company.com
-☑️ ⚡ Submit expense report - Todoist
-☑️ • Respond to client inquiry - Email from client@company.com
-☑️ • Vehicle registration renewal - Email from DMV
-☑️ • Conference scheduling - Todoist
-
-## 📅 Tomorrow
-**3 items** - Plan ahead
-
-☑️ • Team meeting prep - Todoist
-☑️ • Send project update - Email from project-lead@company.com
-☑️ • Review contract - Todoist
-
-## 📆 This Week
-**4 items** - Keep on radar
-
-☑️ • Complete training module - Todoist
-☑️ • Schedule dentist appointment - Email reminder
-☑️ • Review performance goals - Todoist
-☑️ • Submit timesheet - Email from HR
-
-## 📦 Backlog
-**3 items** - No immediate deadline
-
-☑️ • Research vacation destinations - Todoist
-☑️ • Update resume - Todoist
-☑️ • Organize photos - Todoist
-
----
-
-## 📝 How to Use This Board
-1. ✅ Check off tasks as you complete them
-2. 🔄 Run daily planner again tomorrow to refresh
-3. 📋 Completed tasks will show in "Completed" section
-4. 🎯 Focus on Today section first, then Tomorrow
 ```
 
 ---
@@ -1047,12 +799,10 @@ notepad "G:\My Drive\03_Areas\Keys\Environments\environments.json"
 
 ### Todoist
 
-**Bi-directional sync:**
-- Tasks from Todoist → Daily Plan
-- Complete in Todoist → Removed from next day's plan
-- Add to Todoist → Appears in next day's plan
-
-**Best Practice:** Use Todoist as your task inbox. Daily planner pulls from it.
+**Write:** Email analyses → new daily-plan tasks pushed to Todoist  
+**Read:** Existing Todoist tasks pulled into plan  
+**Label:** `daily-plan` tag marks auto-created tasks  
+**Cleanup:** Old `daily-plan` tasks deleted at start of each run
 
 ### Gmail
 
@@ -1061,36 +811,31 @@ notepad "G:\My Drive\03_Areas\Keys\Environments\environments.json"
 - Emails are not modified
 - Archive manually after handling
 
-**Best Practice:** Use email processing to create Todoist tasks, then daily planner pulls them.
-
 ### Amplenote
 
 **One-way sync:**
 - Daily Plan → Amplenote board
 - Check off in Amplenote (doesn't sync back)
-- New board created daily
-
-**Best Practice:** Use Amplenote board for daily execution, Todoist for task management.
+- Static note title "📋 Daily Plan" reused each run
 
 ---
 
 ## Version History
 
 | Version | Date | Changes |
-|---------|------|---------|
-| 1.0.0 | 2026-02-22 | Initial release with Gmail, Todoist integration, smart filtering, Kanban board generation |
+|---------|------|-------|
+| 1.0.0 | 2026-02-22 | Initial release with Gmail, Todoist integration |
+| 2.0.0 | 2026-03-01 | V2 comprehensive analyzer, thread analysis |
+| 3.0.0 | 2026-04-09 | AI thread analysis with content quality rules |
+| 3.1.0 | 2026-05-06 | Claude sonnet-4-6 AI, sign-up filtering, removed OneDrive/Outlook |
 
 ---
 
 ## Related Guides
 
-- [MASTER_GUIDE_Email_Processing.md](MASTER_GUIDE_Email_Processing.md) - Email processing and filtering
-- [MASTER_GUIDE_Amplenote_API_Integration.md](MASTER_GUIDE_Amplenote_API_Integration.md) - Amplenote API usage
-- [MASTER_GUIDE_Environments_and_Credentials.md](MASTER_GUIDE_Environments_and_Credentials.md) - Credential management
-- [MASTER_GUIDE_ROUTING_RULES.md](MASTER_GUIDE_ROUTING_RULES.md) - Routing rules
+- [skill_email_processing.md](skill_email_processing.md) - Email processing and filtering
+- [CONFIGURATION.md](../CONFIGURATION.md) - Credential management
 
 ---
 
 **End of Master Guide**
-
-For questions or issues, refer to the troubleshooting section or related guides.
