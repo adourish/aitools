@@ -5,11 +5,9 @@ Analyzes email threads over 2 weeks with full context and creates single consoli
 """
 
 import asyncio
-import json
 import logging
 import argparse
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from auth_manager import AuthManager
 from gmail_tools import GmailTools
@@ -146,7 +144,7 @@ async def process_new_comprehensive():
     logger.info(f"\n{comprehensive_summary}\n")
     
     # Step 6: Create detailed breakdown for Amplenote
-    logger.info("\n📋 STEP 7: Preparing detailed breakdown...")
+    logger.info("\n\ud83d� STEP 7: Preparing detailed breakdown...")
     
     detailed_breakdown = {
         "summary": comprehensive_summary,
@@ -195,16 +193,6 @@ async def process_new_comprehensive():
     if stale_tasks:
         logger.info(f"   ⏳ Stale tasks (>{STALE_THRESHOLD_DAYS}d overdue): {len(stale_tasks)} — review or reschedule")
     
-    # Step 7: Save comprehensive output
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    output_file = output_dir / f"comprehensive_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
-    with open(output_file, 'w') as f:
-        json.dump(detailed_breakdown, f, indent=2)
-    
-    logger.info(f"\n💾 Full analysis saved to: {output_file}")
-    
     # Step 7.5: Deduplicate action items across analyses
     logger.info("\n🧹 STEP 7.5: Deduplicating action items...")
     thread_analyses = analyzer.deduplicate_action_items(thread_analyses)
@@ -232,7 +220,6 @@ async def process_new_comprehensive():
             import re as _re
             date_match = _re.search(r'(\d{4}-\d{2}-\d{2})', follow_text)
             if not date_match:
-                # Try "march 16, 2026" style
                 date_match = _re.search(r'(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{4}', follow_text)
             if date_match:
                 try:
@@ -326,7 +313,7 @@ async def process_new_comprehensive():
                 break
 
     # Step 8: Create individual Todoist tasks for each action
-    logger.info("\n📋 STEP 8: Creating individual Todoist tasks...")
+    logger.info("\n\ud83d� STEP 8: Creating individual Todoist tasks...")
 
     try:
         # Delete old daily plan tasks first (including legacy formats)
@@ -492,8 +479,7 @@ async def process_new_comprehensive():
             logger.info(f"   ✅ Created follow-up task (due {due_date}): {task_title[:80]}")
 
         # Create tasks for NON-ROUTINE calendar events
-        # Recurring events (regular taekwondo, cleaners, etc.) are skipped
-        # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Recurring events and signup events are skipped unless they need attention
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -505,6 +491,8 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        signup_keywords = ['signup', 'sign up', 'sign-up', 'registration']
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -515,9 +503,10 @@ async def process_new_comprehensive():
             summary_lower = summary.lower()
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
+            is_signup = any(kw in summary_lower for kw in signup_keywords)
 
-            if is_recurring and not needs_attention:
-                logger.info(f"   Skipped recurring event: {summary[:60]}")
+            if (is_recurring or is_signup) and not needs_attention:
+                logger.info(f"   Skipped routine/signup event: {summary[:60]}")
                 continue
 
             task_content = summary
