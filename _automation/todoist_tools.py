@@ -18,7 +18,6 @@ class TodoistTools:
     def __init__(self, auth_manager):
         self.auth_manager = auth_manager
         self.base_url = "https://api.todoist.com/api/v1"
-        # OpenRouter API key will be loaded from auth_manager when needed
         self.openrouter_key = None
         self._openrouter_key_loaded = False
     
@@ -63,7 +62,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -92,7 +91,6 @@ Summary:"""
     async def _generate_task_summary(self, subject: str, sender: str, preview: str) -> str:
         """Use AI to generate actionable task from email content"""
         if not await self._ensure_openrouter_key():
-            # Fallback to cleaned subject
             clean_subject = subject
             for prefix in ['RE: [External] Re: ', 'Re: ', 'RE: ', 'FW: ', 'Fwd: ', 'Fw: ']:
                 if clean_subject.startswith(prefix):
@@ -101,11 +99,9 @@ Summary:"""
             return clean_subject
             
         try:
-            # Detect if this is part of an email chain
             is_reply = any(subject.startswith(prefix) for prefix in ['RE:', 'Re:', 'RE: [External]', 'FW:', 'Fwd:'])
             
             if is_reply:
-                # For email chains, analyze the thread context
                 prompt = f"""Analyze this email thread and create a clear, actionable task (max 60 characters).
 
 Subject: {subject}
@@ -125,7 +121,6 @@ Examples:
 
 Task:"""
             else:
-                # For single emails, simpler prompt
                 prompt = f"""Analyze this email and create a single, clear, actionable task (max 60 characters).
 
 Subject: {subject}
@@ -149,7 +144,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -160,11 +155,9 @@ Task:"""
                 result = response.json()
                 logger.info(f"OpenRouter API response: {result}")
                 
-                # Extract task from response
                 if 'choices' in result and len(result['choices']) > 0:
                     task = result['choices'][0]['message']['content'].strip()
                     logger.info(f"AI generated task: '{task}'")
-                    # Remove quotes if AI added them
                     task = task.strip('"').strip("'")
                     return task
                 else:
@@ -176,7 +169,6 @@ Task:"""
             
         except Exception as e:
             logger.warning(f"AI task generation failed: {e}, using subject instead")
-            # Fallback to cleaned subject
             clean_subject = subject
             for prefix in ['RE: [External] Re: ', 'Re: ', 'RE: ', 'FW: ', 'Fwd: ', 'Fw: ']:
                 if clean_subject.startswith(prefix):
@@ -199,7 +191,6 @@ Task:"""
             tasks = response.json()
             tasks = tasks.get('results', []) if isinstance(tasks, dict) else tasks
             
-            # Filter out auto-created daily plan tasks
             filtered_tasks = []
             for task in tasks:
                 content = task.get('content', '')
@@ -327,7 +318,6 @@ Task:"""
         try:
             headers = await self._get_headers()
             
-            # Get all existing tasks
             response = requests.get(f"{self.base_url}/tasks", headers=headers)
             if response.status_code != 200:
                 logger.error(f"Failed to fetch tasks: {response.status_code}")
@@ -336,7 +326,6 @@ Task:"""
             tasks = response.json()
             tasks = tasks.get('results', []) if isinstance(tasks, dict) else tasks
             
-            # Delete ALL old daily plan tasks (kill and fill)
             deleted_count = 0
             for task in tasks:
                 content = task.get('content', '')
@@ -347,7 +336,6 @@ Task:"""
             if deleted_count > 0:
                 logger.info(f"Deleted {deleted_count} old daily plan tasks")
             
-            # Deduplicate and filter DO NOW items
             seen_subjects = set()
             filtered_do_now = []
             
@@ -355,53 +343,43 @@ Task:"""
                 title = item['title']
                 source = item.get('source', '')
                 
-                # Skip file organization items
                 if 'file' in title.lower() and 'inbox' in title.lower():
                     continue
                 
-                # Deduplicate email threads (RE:, Re:, FW:, Fwd:)
                 clean_title = title
                 for prefix in ['RE: [External] Re: ', 'Re: ', 'RE: ', 'FW: ', 'Fwd: ', 'Fw: ']:
                     if clean_title.startswith(prefix):
                         clean_title = clean_title[len(prefix):]
                 
-                # Skip if we've seen this subject already
                 if clean_title.lower() in seen_subjects:
                     continue
                 
                 seen_subjects.add(clean_title.lower())
                 filtered_do_now.append(item)
             
-            # Create tasks for top 5 filtered DO NOW items (DakBoard visible)
             created_count = 0
             for item in filtered_do_now[:5]:
                 title = item['title']
                 due = item.get('due', 'today')
                 time_info = f" at {item['time']}" if item.get('time') else ''
                 source = item.get('source', 'Unknown')
+                thread_context = ''
                 
-                # Use existing AI summary if available, otherwise use title
                 if source == 'Email' and item.get('ai_summary'):
-                    # Build detailed task title for DakBoard visibility
                     action_task = item['ai_summary']
                     sender_name = item.get('from', '').split('<')[0].strip() if item.get('from') else 'Unknown'
                     
-                    # Add thread context snippet if available (first sentence)
                     context_snippet = ""
                     if item.get('thread_context'):
                         thread_context = item['thread_context']
-                        # Get first sentence or first 100 chars
                         first_sentence = thread_context.split('.')[0][:100]
                         if first_sentence:
                             context_snippet = f" - {first_sentence}"
                     
-                    # Create detailed title: Action | From | Context
                     task_title = f"🎯 {action_task} (from {sender_name}){context_snippet}{time_info}"
-                    # Limit to 250 chars for readability
                     if len(task_title) > 250:
                         task_title = task_title[:247] + "..."
                 else:
-                    # For non-email items, use clean title
                     clean_title = title
                     for prefix in ['RE: [External] Re: ', 'Re: ', 'RE: ', 'FW: ', 'Fwd: ', 'Fw: ']:
                         if clean_title.startswith(prefix):
@@ -410,31 +388,24 @@ Task:"""
                     task_title = f"🎯 TODAY: {clean_title}{time_info}"
                     thread_context = item.get('thread_context', '')
                 
-                # Build detailed description with context
                 description_parts = [f"**Source:** {source}"]
                 
-                # Add sender info for emails
                 if item.get('from'):
                     description_parts.append(f"**From:** {item['from']}")
                 
-                # Add thread context if this is an email chain
                 if thread_context:
                     description_parts.append(f"\n**Thread Summary:**\n{thread_context}")
                 
-                # Add original subject if we generated a summary
                 if source == 'Email' and item.get('preview'):
                     description_parts.append(f"\n**Subject:** {title}")
                 
-                # Add email preview/body snippet
                 if item.get('preview'):
-                    preview = item['preview'][:300]  # First 300 chars
+                    preview = item['preview'][:300]
                     description_parts.append(f"\n**Preview:**\n{preview}")
                 
-                # Add date info if available
                 if item.get('date'):
                     description_parts.append(f"\n**Received:** {item['date']}")
                 
-                # Add email ID for reference
                 if item.get('email_id'):
                     description_parts.append(f"\n**Email ID:** {item['email_id']}")
                 
@@ -443,19 +414,17 @@ Task:"""
                 await self.create_task(
                     content=task_title,
                     due_string=due if due != 'today' else 'today',
-                    priority=4,  # High priority (red)
+                    priority=4,
                     description="\n".join(description_parts)
                 )
                 created_count += 1
             
-            # Create individual tasks for DO SOON items (more actionable)
             if do_soon_items:
-                for item in do_soon_items[:3]:  # Top 3 upcoming items
+                for item in do_soon_items[:3]:
                     title = item['title']
                     due_date = item.get('due', '')
                     source = item.get('source', 'Unknown')
                     
-                    # Format due date for display
                     due_display = ''
                     if due_date:
                         try:
@@ -471,7 +440,7 @@ Task:"""
                         await self.create_task(
                             content=task_title,
                             due_string=due_date if due_date else 'next week',
-                            priority=2,  # Medium priority (yellow)
+                            priority=2,
                             description=f"Source: {source}\nFrom: Daily Planner\nGenerated: {datetime.now().strftime('%I:%M %p')}"
                         )
                         created_count += 1
