@@ -71,6 +71,8 @@ RULES:
 - If the DEADLINE has already passed (before {today_str}), set ACTION ITEMS to "None - deadline passed [date]" and PRIORITY to "low". Do NOT suggest actions for expired events.
 - If there is NO specific action I must personally take, set ACTION ITEMS to "None - informational only" and PRIORITY to "low".
 - Newsletters, FYI updates, confirmations, status reports = "None - informational only"
+- OneDrive/SharePoint file sharing notifications, storage alerts = "None - informational only"
+- Sign-up confirmations, account creation emails, welcome emails, email verifications = "None - informational only"
 - Someone else handling it = "None - waiting on [person]"
 - I already replied/acted = "None - already handled"
 - "Review", "consider", "be aware of", "stay informed" are NOT action items
@@ -110,7 +112,7 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
