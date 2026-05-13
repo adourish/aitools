@@ -99,8 +99,6 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
@@ -117,6 +115,7 @@ class GmailTools:
             'today at', 'this afternoon', 'this evening',
             'same day', 'deadline today',
             'certification', 'scuba', 'padi', 'dive trip',
+            'sign up', 'sign-up', 'signup', 'register', 'registration',
         ]
         
         self.skip_keywords = [
