@@ -494,6 +494,7 @@ async def process_new_comprehensive():
         # Create tasks for NON-ROUTINE calendar events
         # Recurring events (regular taekwondo, cleaners, etc.) are skipped
         # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Sign-up and registration events are always skipped
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -505,6 +506,13 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        # Events matching these keywords are always skipped (sign-ups, registrations)
+        skip_event_keywords = [
+            'sign up', 'signup', 'sign-up',
+            'register', 'registration',
+            'enroll', 'enrollment',
+        ]
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +521,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            # Skip sign-up and registration type events entirely
+            if any(kw in summary_lower for kw in skip_event_keywords):
+                logger.info(f"   Skipped sign-up/registration event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
