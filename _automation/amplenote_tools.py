@@ -422,9 +422,9 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "openai/gpt-4o",
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 200
+                    "max_tokens": 300
                 },
                 timeout=30
             )
