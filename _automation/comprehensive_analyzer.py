@@ -110,9 +110,9 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "openai/gpt-4o",
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 700 if is_cluster else 500
+                    "max_tokens": 1000 if is_cluster else 800
                 },
                 timeout=30
             )
