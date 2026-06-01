@@ -12,6 +12,9 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+OPENROUTER_MODEL = "anthropic/claude-sonnet-4-5"
+
+
 class ComprehensiveAnalyzer:
     """Analyzes email threads, tasks, and calendar to provide comprehensive context"""
     
@@ -110,7 +113,7 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": OPENROUTER_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
