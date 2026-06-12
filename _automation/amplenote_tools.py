@@ -422,7 +422,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-6",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -444,7 +444,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
     async def update_daily_note_with_plan(self, plan: Dict[str, Any]) -> bool:
         """Create/update single daily plan note using INSERT_NODES for proper rendering"""
         try:
-            static_title = "📋 Daily Plan"
+            static_title = "\U0001f4cb Daily Plan"
 
             # Find existing note to replace
             all_notes = await self.get_notes(tag='daily-plan')
@@ -547,7 +547,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         now = datetime.now()
 
         # ── Header ──
-        nodes.append(self._make_paragraph(f"📅 {now.strftime('%A, %B %d, %Y')}"))
+        nodes.append(self._make_paragraph(f"\U0001f4c5 {now.strftime('%A, %B %d, %Y')}"))
 
         # ── Today's Schedule ──
         today_events = plan.get('today_events', [])
@@ -672,7 +672,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         lines.append(f"*Generated: {datetime.now().strftime('%Y-%m-%d %I:%M %p')}*\n")
         
         # DO NOW section
-        lines.append("### 🎯 DO NOW")
+        lines.append("### \U0001f3af DO NOW")
         if plan['do_now']:
             for item in plan['do_now']:
                 if item['source'] == 'Email':
@@ -697,7 +697,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
             lines.append("- *No upcoming items*")
         
         # MONITOR section
-        lines.append("\n### 📋 MONITOR")
+        lines.append("\n### \U0001f4cb MONITOR")
         if plan['monitor']:
             for item in plan['monitor']:
                 lines.append(f"- [ ] {item['title']}")
