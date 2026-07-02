@@ -40,24 +40,24 @@ async def process_new_comprehensive():
     todoist = TodoistTools(auth_manager)
     calendar = CalendarTools(auth_manager)
     amplenote = AmplenoteTools(auth_manager)
-    
+
     # Step 1: Fetch email threads from last 2 weeks
-    logger.info("\n📧 STEP 1: Fetching email threads (30 day lookback)...")
+    logger.info("\n\U0001f4e7 STEP 1: Fetching email threads (30 day lookback)...")
     all_threads = await thread_tools.get_thread_emails(days=30)
     logger.info(f"   Found {len(all_threads)} total threads")
-    
+
     # Step 2: Filter to priority threads
-    logger.info("\n🎯 STEP 2: Identifying priority threads...")
+    logger.info("\n\U0001f3af STEP 2: Identifying priority threads...")
     priority_threads = thread_tools.get_priority_threads(all_threads, max_threads=15)
     logger.info(f"   Selected {len(priority_threads)} priority threads for analysis")
 
     # Step 2.5: Cluster related threads by sender
-    logger.info("\n🔗 STEP 2.5: Clustering related threads by sender...")
+    logger.info("\n\U0001f517 STEP 2.5: Clustering related threads by sender...")
     clustered_threads = thread_tools.cluster_threads_by_sender(priority_threads)
     logger.info(f"   Clustered {len(priority_threads)} threads into {len(clustered_threads)} groups")
 
     # Step 3: Analyze each priority thread comprehensively
-    logger.info("\n🔍 STEP 3: Analyzing threads comprehensively...")
+    logger.info("\n\U0001f50d STEP 3: Analyzing threads comprehensively...")
     thread_analyses = []
 
     for i, (subject, emails) in enumerate(clustered_threads.items(), 1):
@@ -68,14 +68,14 @@ async def process_new_comprehensive():
 
         analysis = await analyzer.analyze_email_thread(emails, subject, is_cluster=is_cluster)
         thread_analyses.append(analysis)
-        
+
         # Log key findings
         logger.info(f"      ✓ Priority: {analysis['priority'].upper()}")
         logger.info(f"      ✓ Action items: {len(analysis['action_items'])}")
         logger.info(f"      ✓ Follow-up needed: {'YES' if analysis['follow_up_needed'] else 'NO'}")
         if analysis['action_items']:
             logger.info(f"      ✓ First action: {analysis['action_items'][0][:80]}")
-    
+
     # Step 4: Get tasks and calendar
     logger.info("\n✅ STEP 4: Fetching Todoist tasks...")
     tasks = await todoist.get_tasks()
@@ -118,8 +118,8 @@ async def process_new_comprehensive():
             logger.info(f"      ⚠️  {st['content']} (due {st['due']['date']})")
     if no_date_tasks:
         logger.info(f"   Found {len(no_date_tasks)} tasks with no due date")
-    
-    logger.info("\n📅 STEP 5: Fetching calendar events...")
+
+    logger.info("\n\U0001f4c5 STEP 5: Fetching calendar events...")
     try:
         events = await calendar.get_events(days_ahead=7)  # Get full week
         tomorrow = (today_dt + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -131,23 +131,23 @@ async def process_new_comprehensive():
         logger.warning(f"   Calendar unavailable (insufficient scopes or auth): {e}")
         events = []
         today_events = []
-    
+
     # Step 5: Create comprehensive summary
-    logger.info("\n📝 STEP 6: Creating comprehensive daily summary...")
+    logger.info("\n\U0001f4dd STEP 6: Creating comprehensive daily summary...")
     comprehensive_summary = await analyzer.create_comprehensive_daily_summary(
         thread_analyses,
         today_tasks,
         today_events
     )
-    
+
     logger.info(f"\n{'=' * 80}")
     logger.info("COMPREHENSIVE DAILY SUMMARY")
     logger.info(f"{'=' * 80}")
     logger.info(f"\n{comprehensive_summary}\n")
-    
+
     # Step 6: Create detailed breakdown for Amplenote
-    logger.info("\n📋 STEP 7: Preparing detailed breakdown...")
-    
+    logger.info("\n\U0001f4cb STEP 7: Preparing detailed breakdown...")
+
     detailed_breakdown = {
         "summary": comprehensive_summary,
         "generated_at": datetime.now().isoformat(),
@@ -162,7 +162,7 @@ async def process_new_comprehensive():
         "no_date_tasks": no_date_tasks,
         "events_today": today_events
     }
-    
+
     # Categorize analyses
     for analysis in thread_analyses:
         item = {
@@ -176,41 +176,41 @@ async def process_new_comprehensive():
             "latest_from": analysis['latest_sender'],
             "email_count": analysis['email_count']
         }
-        
+
         if analysis['priority'] == 'high':
             detailed_breakdown['high_priority'].append(item)
         elif analysis['priority'] == 'medium':
             detailed_breakdown['medium_priority'].append(item)
         else:
             detailed_breakdown['low_priority'].append(item)
-        
+
         if analysis['follow_up_needed']:
             detailed_breakdown['follow_ups_needed'].append(item)
-    
+
     # Log breakdown
-    logger.info(f"   🔴 High priority (DO NOW): {len(detailed_breakdown['high_priority'])} threads")
+    logger.info(f"   \U0001f534 High priority (DO NOW): {len(detailed_breakdown['high_priority'])} threads")
     logger.info(f"   ⚠️  Medium priority (DO SOON): {len(detailed_breakdown['medium_priority'])} threads")
     logger.info(f"   ℹ️  Low priority (monitor): {len(detailed_breakdown['low_priority'])} threads")
-    logger.info(f"   📧 Follow-ups needed: {len(detailed_breakdown['follow_ups_needed'])} threads")
+    logger.info(f"   \U0001f4e7 Follow-ups needed: {len(detailed_breakdown['follow_ups_needed'])} threads")
     if stale_tasks:
         logger.info(f"   ⏳ Stale tasks (>{STALE_THRESHOLD_DAYS}d overdue): {len(stale_tasks)} — review or reschedule")
-    
+
     # Step 7: Save comprehensive output
     output_dir = Path(__file__).parent / "output"
     output_dir.mkdir(exist_ok=True)
     output_file = output_dir / f"comprehensive_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
+
     with open(output_file, 'w') as f:
         json.dump(detailed_breakdown, f, indent=2)
-    
-    logger.info(f"\n💾 Full analysis saved to: {output_file}")
-    
+
+    logger.info(f"\n\U0001f4be Full analysis saved to: {output_file}")
+
     # Step 7.5: Deduplicate action items across analyses
-    logger.info("\n🧹 STEP 7.5: Deduplicating action items...")
+    logger.info("\n\U0001f9f9 STEP 7.5: Deduplicating action items...")
     thread_analyses = analyzer.deduplicate_action_items(thread_analyses)
 
     # Step 7.55: Filter out informational-only and expired threads
-    logger.info("\n🧹 STEP 7.55: Filtering out informational-only and expired threads...")
+    logger.info("\n\U0001f9f9 STEP 7.55: Filtering out informational-only and expired threads...")
     actionable_analyses = []
     informational_count = 0
     expired_count = 0
@@ -304,7 +304,7 @@ async def process_new_comprehensive():
         logger.info(f"   Capped DO NOW at {MAX_DO_NOW}, moved {len(overflow)} items to DO SOON")
 
     # Step 7.6: Cross-reference calendar events with email analyses
-    logger.info("\n📅 STEP 7.6: Cross-referencing calendar with email threads...")
+    logger.info("\n\U0001f4c5 STEP 7.6: Cross-referencing calendar with email threads...")
     matched_event_indices = set()
     stop_words = {'the', 'a', 'an', 'to', 'for', 'and', 'or', 'is', 'in', 'on', 'at', 'of', 'your', 'this', 'that'}
     all_events_list = today_events + [e for e in events if e.get('date') != today]
@@ -326,12 +326,12 @@ async def process_new_comprehensive():
                 break
 
     # Step 8: Create individual Todoist tasks for each action
-    logger.info("\n📋 STEP 8: Creating individual Todoist tasks...")
+    logger.info("\n\U0001f4cb STEP 8: Creating individual Todoist tasks...")
 
     try:
         # Delete old daily plan tasks first (including legacy formats)
         all_tasks = await todoist.get_tasks()
-        legacy_prefixes = ('📋', '🎯 TODAY:', '⏰ SOON:', '🎯 ')
+        legacy_prefixes = ('\U0001f4cb', '\U0001f3af TODAY:', '⏰ SOON:', '\U0001f3af ')
         for task in all_tasks:
             content = task.get('content', '')
             labels = task.get('labels', [])
@@ -345,7 +345,7 @@ async def process_new_comprehensive():
             if is_daily_plan:
                 await todoist.delete_task(task['id'])
                 logger.info(f"   Deleted old task: {content[:50]}")
-        
+
         created_count = 0
         seen_actions = set()  # Track normalized actions to prevent duplicates
 
@@ -494,6 +494,7 @@ async def process_new_comprehensive():
         # Create tasks for NON-ROUTINE calendar events
         # Recurring events (regular taekwondo, cleaners, etc.) are skipped
         # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Sign-up/registration events are always skipped (noise, not actionable)
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -505,6 +506,11 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        signup_keywords = [
+            'signup', 'sign up', 'sign-up', 'sign ups', 'sign-ups',
+            'registration', 'register',
+        ]
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +519,10 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            if any(kw in summary_lower for kw in signup_keywords):
+                logger.info(f"   Skipped sign-up event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
@@ -541,14 +551,14 @@ async def process_new_comprehensive():
             )
             created_count += 1
             logger.info(f"   ✅ Created calendar task: {task_content[:60]}")
-        
+
         logger.info(f"\n   ✅ Created {created_count} total tasks")
-        
+
     except Exception as e:
         logger.error(f"   ❌ Error creating Todoist tasks: {e}")
-    
+
     # Step 9: Update Amplenote with detailed analysis
-    logger.info("\n📝 STEP 9: Updating Amplenote daily note...")
+    logger.info("\n\U0001f4dd STEP 9: Updating Amplenote daily note...")
     try:
         # Create formatted plan for Amplenote
         amplenote_plan = {
@@ -571,7 +581,7 @@ async def process_new_comprehensive():
             },
             "generated_at": datetime.now().isoformat()
         }
-        
+
         # Add high priority items to do_now
         for item in detailed_breakdown['high_priority']:
             amplenote_plan["do_now"].append({
@@ -585,7 +595,7 @@ async def process_new_comprehensive():
                 "email_count": item['email_count'],
                 "priority": "high"
             })
-        
+
         # Add medium priority to do_soon
         for item in detailed_breakdown['medium_priority']:
             amplenote_plan["do_soon"].append({
@@ -631,14 +641,14 @@ async def process_new_comprehensive():
             logger.info("   ✅ Amplenote daily note updated successfully")
         else:
             logger.warning("   ⚠️  Could not update Amplenote daily note")
-            
+
     except Exception as e:
         logger.error(f"   ❌ Error updating Amplenote: {e}")
-    
+
     logger.info("\n" + "=" * 80)
     logger.info("COMPREHENSIVE ANALYSIS COMPLETE")
     logger.info("=" * 80)
-    
+
     return detailed_breakdown
 
 async def main():
@@ -650,12 +660,12 @@ async def main():
 Examples:
   # Use default environment path
   python run_process_new_v2.py
-  
+
   # Use custom environment path
   python run_process_new_v2.py
         """
     )
-    
+
     args = parser.parse_args()
 
     try:
