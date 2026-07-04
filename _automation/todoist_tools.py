@@ -63,7 +63,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -149,7 +149,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -317,7 +317,7 @@ Task:"""
             return True
         
         except Exception as e:
-            logger.error(f"Error deleting Todoist task: {e}")
+tml logger.error(f"Error deleting Todoist task: {e}")
             raise
     
     async def create_daily_plan_tasks(self, do_now_items: List[Dict[str, Any]], do_soon_items: List[Dict[str, Any]]) -> bool:
