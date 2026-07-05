@@ -63,13 +63,13 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 logger.info(f"OpenRouter thread context response: {result}")
@@ -149,7 +149,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
