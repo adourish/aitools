@@ -520,6 +520,12 @@ async def process_new_comprehensive():
                 logger.info(f"   Skipped recurring event: {summary[:60]}")
                 continue
 
+            # Skip sign-up/registration events (informational, not actionable)
+            signup_patterns = ['signup', 'sign up', 'sign-up', 'sign-ups', 'register', 'registration', 'onedrive']
+            if any(kw in summary_lower for kw in signup_patterns) and not needs_attention:
+                logger.info(f"   Skipped sign-up/registration event: {summary[:60]}")
+                continue
+
             task_content = summary
             if time and time != 'All day':
                 task_content = f"{summary} at {time}"
