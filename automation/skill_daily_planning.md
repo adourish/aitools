@@ -38,7 +38,7 @@ Gmail (30 days) + Calendar (7 days) + Todoist
   └─────┬──────┘
         │ ~13 clustered groups
   ┌─────┴──────┐
-  │ AI         │  OpenRouter (gpt-4o-mini) per thread:
+  │ AI         │  OpenRouter (claude-haiku-4-5-20251001) per thread:
   │ Analysis   │  → ACTION ITEMS, DEADLINE (YYYY-MM-DD), PRIORITY,
   │            │  → CONTEXT (specific, not filler), FOLLOW_UP
   └─────┬──────┘
@@ -67,7 +67,7 @@ Todoist Tasks                    Amplenote Note
 ### Key Files
 
 | File | Purpose |
-|------|---------|
+|------|-------|
 | `_automation/run_process_new_v2.py` | Main orchestrator — all 9 steps |
 | `_automation/gmail_tools.py` | Gmail fetch, sender filtering, priority keywords |
 | `_automation/gmail_thread_tools.py` | Thread grouping, priority scoring, clustering |
@@ -126,11 +126,9 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 
 **Inputs:**
 - 📧 **Gmail emails** (past 1 month) - personal email, intelligent filtering
-- � **Google Calendar events** (next 7 days) - upcoming meetings and appointments
+- 📅 **Google Calendar events** (next 7 days) - upcoming meetings and appointments
 - 📋 **Todoist tasks** - active tasks with priorities
 - 📄 **Google Drive documents** - recently modified files (last 7 days)
-- � **Outlook/Microsoft 365 emails** (past 1 month) - work email (requires admin approval)
-- �📄 **SharePoint documents** - recently accessed work files (requires admin approval)
 
 **Intelligent Processing:**
 - 🧠 **AI-powered email analysis** - Detects actionable items vs spam/newsletters
@@ -143,11 +141,11 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 - 🎯 **Action-Priority Daily Plan** with sections:
   - 🎯 **DO NOW** - Urgent & important (due today/tomorrow, high priority)
   - ⏰ **DO SOON** - Important (due this week, medium priority)
-  - � **MONITOR** - Awareness items (no immediate action needed)
+  - 📋 **MONITOR** - Awareness items (no immediate action needed)
   - 📌 **REFERENCE** - Important info saved (account numbers, confirmations)
-  - � **CONTEXT** - Recent documents and email summary
+  - 📄 **CONTEXT** - Recent documents and email summary
 - 📝 **Reference email notes** - Auto-created in Amplenote for important info
-- � **Daily plan JSON** - Saved for Amplenote sync
+- 💾 **Daily plan JSON** - Saved for Amplenote sync
 
 ### Key Features
 
@@ -186,14 +184,9 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 - Google Drive (7 days of documents) - OAuth auto-handled
 - Todoist (all active tasks) - API token in environments.json
 
-**❌ REQUIRES ADMIN APPROVAL:**
-- Microsoft 365 Outlook (work email) - Blocked by organization policy
-- SharePoint (work documents) - Blocked by organization policy
-
 **OAuth Credentials Location:**
 - Gmail/Calendar/Drive: `G:\My Drive\03_Areas\Keys\Gmail\credentials.json`
 - Gmail Token: `G:\My Drive\03_Areas\Keys\Gmail\token.json` (auto-refreshed)
-- Microsoft 365: `G:\My Drive\03_Areas\Keys\Microsoft365\` (requires IT approval)
 
 **OAuth Scopes:**
 ```python
@@ -250,16 +243,16 @@ GMAIL_SCOPES = [
         │     1. Data Collection (daily_planner.py)│
         └─────────────────────────────────────────┘
                               │
-        ┌─────────┬───────────┼───────────┬─────────┬─────────┐
-        │         │           │           │         │         │
-        ▼         ▼           ▼           ▼         ▼         ▼
-   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-   │ Gmail  │ │Outlook │ │Todoist │ │ Google │ │SharePt │ │Calendar│
-   │  API   │ │MS Graph│ │ API v1 │ │ Drive  │ │MS Graph│ │(Future)│
-   │Personal│ │  Work  │ │ Tasks  │ │  Docs  │ │  Docs  │ │        │
-   └────────┘ └────────┘ └────────┘ └────────┘ └────────┘ └────────┘
-        │         │           │           │         │         │
-        └─────────┴───────────┴───────────┴─────────┴─────────┘
+        ┌─────────┬───────────┬─────────┐
+        │         │           │         │
+        ▼         ▼           ▼         ▼
+   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+   │ Gmail  │ │Todoist │ │ Google │ │Calendar│
+   │  API   │ │ API v1 │ │ Drive  │ │        │
+   │Personal│ │ Tasks  │ │  Docs  │ │        │
+   └────────┘ └────────┘ └────────┘ └────────┘
+        │         │           │         │
+        └─────────┴───────────┴─────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
@@ -316,9 +309,8 @@ python run_process_new_v2.py
 
 **What Happens:**
 
-1. **Dual Email Collection** (30-45 seconds)
+1. **Email Collection** (30-45 seconds)
    - Scans Gmail (last 2 days) for actionable items
-   - Scans Outlook/Microsoft 365 (last 2 days) for work emails
    - Fetches active Todoist tasks
    - Filters out spam, newsletters, automated alerts
 
@@ -328,7 +320,7 @@ python run_process_new_v2.py
    - **Urgency detection**: Identifies urgent, asap, deadline, today keywords
    - **Sender importance**: Prioritizes real people over automated systems
    - **Spam filtering**: Skips newsletters, marketing, social media, tracking
-   - **Deduplication**: Removes duplicate items across Gmail, Outlook, Todoist
+   - **Deduplication**: Removes duplicate items across Gmail and Todoist
 
 3. **Auto-Task/Note Creation** (10-15 seconds)
    - **Creates tasks in BOTH Todoist AND Amplenote** for actionable emails
@@ -346,7 +338,7 @@ python run_process_new_v2.py
    - Adds tasks with checkboxes (personal + work)
    - Includes due dates and priorities
    - Adds "📄 Documents in Progress" section
-   - Shows Google Drive + SharePoint recent files
+   - Shows Google Drive recent files
    - Adds "📧 Email Summary" section
    - Highlights newly created tasks from emails
    - Generates usage instructions
@@ -486,7 +478,6 @@ meeting_patterns = [
 
 Items are deduplicated across all sources:
 - **Gmail**: "Review Q1 budget by Friday"
-- **Outlook**: "RE: Review Q1 budget"
 - **Todoist**: "Review Q1 budget"
 - **Result:** Single task in Today section (keeps most detailed version)
 
@@ -616,12 +607,6 @@ node sync_plan_to_amplenote.js
    Filtered spam/newsletters: 38
    Actionable items: 5
    Reference items: 4
-
-📧 Scanning Outlook (last 2 days)...
-   Total emails: 23  
-   Filtered spam/newsletters: 15
-   Actionable items: 6
-   Reference items: 2
 
 ✅ Auto-created Todoist tasks: 8
 📝 Auto-created Amplenote notes: 3
