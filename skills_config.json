@@ -1,22 +1,22 @@
 {
-  "SKILLS_ROOT": "G:\\My Drive\\06_Skills",
+  "SKILLS_ROOT": "G:\\My Drive\\Resources\\Skills",
   "PARA_ROOT": "G:\\My Drive",
   "description": "Configuration for the Skills repository and PARA method locations.",
   "examples": {
     "windows": {
-      "SKILLS_ROOT": "G:\\My Drive\\06_Skills",
+      "SKILLS_ROOT": "G:\\My Drive\\Resources\\Skills",
       "PARA_ROOT": "G:\\My Drive"
     },
     "windows_alt": {
-      "SKILLS_ROOT": "C:\\Users\\YourName\\Documents\\06_Skills",
+      "SKILLS_ROOT": "C:\\Users\\YourName\\Documents\\Resources\\Skills",
       "PARA_ROOT": "C:\\Users\\YourName\\Documents"
     },
     "linux": {
-      "SKILLS_ROOT": "/home/username/06_Skills",
+      "SKILLS_ROOT": "/home/username/GoogleDrive/Resources/Skills",
       "PARA_ROOT": "/home/username/GoogleDrive"
     },
     "mac": {
-      "SKILLS_ROOT": "/Users/username/Documents/06_Skills",
+      "SKILLS_ROOT": "/Users/username/Google Drive/Resources/Skills",
       "PARA_ROOT": "/Users/username/Google Drive"
     }
   },
