@@ -16,7 +16,7 @@ from credential_resolver import CredentialResolver
 
 logger = logging.getLogger(__name__)
 
-GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
+GMAIL_TOKEN_PATH = Path(r'G:\My Drive\03_Areas\Keys\Gmail\token.json')
 
 
 class AuthManager:
@@ -47,9 +47,6 @@ class AuthManager:
             if self._gmail_creds.expired and self._gmail_creds.refresh_token:
                 logger.info("Refreshing Gmail token")
                 self._gmail_creds.refresh(Request())
-                token_data['token'] = self._gmail_creds.token
-                GMAIL_TOKEN_PATH.write_text(json.dumps(token_data, indent=2))
-                logger.info("Gmail token refreshed and saved")
 
         return self._gmail_creds
 

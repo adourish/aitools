@@ -132,24 +132,11 @@ async def process_new_comprehensive():
         events = []
         today_events = []
     
-    # Step 5: Create comprehensive summary
-    logger.info("\n📝 STEP 6: Creating comprehensive daily summary...")
-    comprehensive_summary = await analyzer.create_comprehensive_daily_summary(
-        thread_analyses,
-        today_tasks,
-        today_events
-    )
-    
-    logger.info(f"\n{'=' * 80}")
-    logger.info("COMPREHENSIVE DAILY SUMMARY")
-    logger.info(f"{'=' * 80}")
-    logger.info(f"\n{comprehensive_summary}\n")
-    
     # Step 6: Create detailed breakdown for Amplenote
     logger.info("\n📋 STEP 7: Preparing detailed breakdown...")
-    
+
     detailed_breakdown = {
-        "summary": comprehensive_summary,
+        "summary": "",
         "generated_at": datetime.now().isoformat(),
         "threads_analyzed": len(thread_analyses),
         "high_priority": [],
