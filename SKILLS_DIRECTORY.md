@@ -48,6 +48,55 @@ Includes convenience wrappers: `list_jobs`, `get_job`, `get_last_build`, `get_bu
 
 ---
 
+## serio-monolith
+**Path**: `skills/serio-monolith/`
+**Description**: Build and run the SERIO monolith — WebLogic 14.1.2.0 + `serio-ws.ear` backend + Angular frontend (`:4200`). Separate from SERIO+; uses **JDK 21** (not 17). WebLogic domain + datasources must be set up first. Orchestration script: `fda-serio/tools/serio/Start-SerioMonolith.ps1` (actions: `up`, `weblogic`, `deploy`, `frontend`).
+**Ports**: WebLogic `:7001` | Angular `:4200`
+**JDK**: **21** (opposite of SERIO+)
+**Hosted dev**: `https://oii.dev.fda.gov/serio`
+**Prerequisites**: WebLogic installed, `serio` domain configured, OASIS Oracle DB + VPN, OASIS user provisioned.
+**See**: `skills/serio-monolith/SKILL.md` | `fda-serio/docs/runbooks/RUNBOOK-run-serio.md`
+
+---
+
+## serioplus-common-lib
+**Path**: `skills/serioplus-common-lib/`
+**Description**: Build and install `serioplus-common-library:13.0.0-SNAPSHOT` into the local Maven repository. Always step 1 before building any SERIO+ service. Critical gotcha: must be installed as `-SNAPSHOT` even though the pom defaults to `13.0.0` — quote the `-Drevision` arg in PowerShell: `mvn '-Drevision=13.0.0-SNAPSHOT' -DskipTests clean install`. Build from the `serioplus-common-library/` subdirectory, not the repo root.
+**JDK**: 17
+**Artifact**: `gov.fda.oii.serioplus:serioplus-common-library:13.0.0-SNAPSHOT`
+**See**: `skills/serioplus-common-lib/SKILL.md`
+
+---
+
+## serioplus-data-services
+**Path**: `skills/serioplus-data-services/`
+**Description**: Build and run the SERIOPlusDataServices tier — 8 Spring Boot data-layer microservices (Java 17) plus the local-gateway-service that fronts them. The only tier that talks to OASIS Oracle. Build with `mvn -DskipTests -nsu clean install` (after common-lib). Run with `--spring.profiles.active=local` for local dev (no AWS). Gateway :8070 is the entry point for the business layer.
+**Ports**: gateway `:8070` | entry `:8090` | lookup `:8091` | user-org `:8092` | work `:8093` | application `:8094` | document `:8095` | screening `:8096` | filer-eval `:8097`
+**JDK**: 17 | **Oracle**: required at runtime | **VPN**: required (Nexus + Oracle)
+**Tool**: `tools/serioplus/SerioPlusStack.ps1 -Action build -Only data` / `-Action start -Only data`
+**See**: `skills/serioplus-data-services/SKILL.md`
+
+---
+
+## serioplus-business-services
+**Path**: `skills/serioplus-business-services/`
+**Description**: Build and run the SERIOPlusServices tier — 7 Spring Boot business-layer microservices (Java 17). Sits between the Angular UI and the data layer. Calls the data gateway at `localhost:8070`. Start after the data tier is up.
+**Ports**: general-admin `:8080` | user-option `:8081` | aiml `:8082` | workflow `:8083` | notice `:8084` | screening `:8085` | filer-eval `:8086`
+**JDK**: 17 | **Requires**: data tier gateway `:8070` running
+**Tool**: `tools/serioplus/SerioPlusStack.ps1 -Action build -Only services` / `-Action start -Only services`
+**See**: `skills/serioplus-business-services/SKILL.md`
+
+---
+
+## serioplus-app
+**Path**: `skills/serioplus-app/`
+**Description**: Build (npm install) and run (ng serve) the SERIOPlusApp Angular 19 UI. Served at `:4201/serioplus/`. Requires FDA Nexus `.npmrc` (copy from `.npmrc.example`). Add `?acceptBanner=true` to any URL to skip the government banner click-through. Hosted dev: `https://oii-cloud.dev.fda.gov/serioplus/`.
+**Port**: `:4201` | **URL**: `http://localhost:4201/serioplus/#/?acceptBanner=true`
+**Tool**: `tools/serioplus/SerioPlusStack.ps1 -Action build -Only app` / `-Action start -Only app`
+**See**: `skills/serioplus-app/SKILL.md`
+
+---
+
 ## gitlab-call
 **Path**: `skills/gitlab/gitlab-call/`
 **Description**: Make authenticated calls to the FDA GitLab instance (`https://git.fda.gov/api/v4`).
