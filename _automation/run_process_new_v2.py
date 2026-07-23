@@ -131,6 +131,7 @@ async def process_new_comprehensive():
         logger.warning(f"   Calendar unavailable (insufficient scopes or auth): {e}")
         events = []
         today_events = []
+        tomorrow_events = []
     
     # Step 5: Create comprehensive summary
     logger.info("\n📝 STEP 6: Creating comprehensive daily summary...")
@@ -494,6 +495,7 @@ async def process_new_comprehensive():
         # Create tasks for NON-ROUTINE calendar events
         # Recurring events (regular taekwondo, cleaners, etc.) are skipped
         # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Signup/registration events are always skipped (not actionable)
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -515,6 +517,12 @@ async def process_new_comprehensive():
             summary_lower = summary.lower()
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
+
+            # Skip signup/registration events (not actionable)
+            signup_keywords = ['signup', 'sign up', 'sign-up', 'registration']
+            if any(kw in summary_lower for kw in signup_keywords) and not needs_attention:
+                logger.info(f"   Skipped signup event: {summary[:60]}")
+                continue
 
             if is_recurring and not needs_attention:
                 logger.info(f"   Skipped recurring event: {summary[:60]}")
