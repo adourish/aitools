@@ -30,3 +30,18 @@ Includes convenience wrappers: `list_jobs`, `get_job`, `get_last_build`, `get_bu
 **Access**: FDA GFE laptop only; full-tunnel VPN required.
 **Import**: Use `importlib.util.spec_from_file_location` (directory name has a hyphen).
 **See**: `skills/jenkins/jenkins-call/skill.md` for full docs and examples.
+
+---
+
+## keepass-lookup
+**Path**: `skills/keepass-lookup/`
+**Description**: Look up any secret from the FDA automation KeePass vault (`automation-keys.kdbx`). Use whenever you need a credential — Jira PAT, Jenkins token, Oracle DB password, ELSA keys, etc. Wraps `keepassxc-cli` with key-file auth (no password prompt). Auto-discovers the vault on both the FDA GFE laptop (`C:\keys\`) and REI laptop (`G:\My Drive\Areas\Keys\`).
+**Runtime**: Python (`shared/keepass_helper.py`) or PowerShell (`tools/keepass/Get-KeePassAttr.ps1`)
+**Requires**: KeePassXC installed; `keepassxc-cli` on PATH; vault + key file present.
+**Known entries**:
+- `DevOps/FDA Jira PAT (sde.fda.gov)` — Password = PAT
+- `DevOps/FDA Jenkins API token (jenkins.fda.gov)` — Password = token, UserName = username
+- `Database/SERIO Oracle DB (oasis_er) Dev-Test` — Password = DB password
+- `API/SEMOSS-Elsa-Dev` — Password = ELSA secret, UserName = ELSA access key
+**Env overrides**: `KEEPASS_DB`, `KEEPASS_KEY` (Python) / `KEEPASS_DB`, `KEEPASS_KEYFILE` (PowerShell)
+**See**: `skills/keepass-lookup/SKILL.md` for full docs, CLI usage, and troubleshooting.

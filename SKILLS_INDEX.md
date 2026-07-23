@@ -16,6 +16,7 @@ This index maps skill names to their locations and brief descriptions for quick 
 | [serio-dev-environment](skills/serio-dev-environment/SKILL.md) | (prompt) | `skills/serio-dev-environment/` | SERIO WebLogic dev environment setup |
 | [serioplus-add-pdf-endpoint](skills/serioplus-add-pdf-endpoint/SKILL.md) | (prompt) | `skills/serioplus-add-pdf-endpoint/` | Add PDF endpoint to SERIO+ |
 | [serioplus-local-run](skills/serioplus-local-run/SKILL.md) | (prompt) | `skills/serioplus-local-run/` | Build and run SERIO+ locally |
+| [keepass-lookup](skills/keepass-lookup/SKILL.md) | Python / PS | `skills/keepass-lookup/` | Look up any secret from the FDA automation KeePass vault |
 
 ## Shared Utilities
 
@@ -30,3 +31,4 @@ This index maps skill names to their locations and brief descriptions for quick 
 | Tool | Description |
 |------|-------------|
 | `tools/claude-code/` | Claude Code ELSA launcher, installer, and statusline |
+| `tools/keepass/` | `Get-KeePassAttr.ps1` — PowerShell KeePass helper (dot-source and call) |
