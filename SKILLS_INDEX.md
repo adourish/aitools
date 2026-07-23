@@ -17,6 +17,7 @@ This index maps skill names to their locations and brief descriptions for quick 
 | [serioplus-add-pdf-endpoint](skills/serioplus-add-pdf-endpoint/SKILL.md) | (prompt) | `skills/serioplus-add-pdf-endpoint/` | Add PDF endpoint to SERIO+ |
 | [serioplus-local-run](skills/serioplus-local-run/SKILL.md) | (prompt) | `skills/serioplus-local-run/` | Build and run SERIO+ locally |
 | [keepass-lookup](skills/keepass-lookup/SKILL.md) | Python / PS | `skills/keepass-lookup/` | Look up any secret from the FDA automation KeePass vault |
+| [gitlab-call](skills/gitlab/gitlab-call/SKILL.md) | Python | `skills/gitlab/gitlab-call/` | Authenticated FDA GitLab REST API (projects, MRs, branches, pipelines, issues) — token auto-loaded from Windows Credential Manager |
 
 ## Shared Utilities
 

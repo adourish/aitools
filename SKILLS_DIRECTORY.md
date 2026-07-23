@@ -45,3 +45,19 @@ Includes convenience wrappers: `list_jobs`, `get_job`, `get_last_build`, `get_bu
 - `API/SEMOSS-Elsa-Dev` — Password = ELSA secret, UserName = ELSA access key
 **Env overrides**: `KEEPASS_DB`, `KEEPASS_KEY` (Python) / `KEEPASS_DB`, `KEEPASS_KEYFILE` (PowerShell)
 **See**: `skills/keepass-lookup/SKILL.md` for full docs, CLI usage, and troubleshooting.
+
+---
+
+## gitlab-call
+**Path**: `skills/gitlab/gitlab-call/`
+**Description**: Make authenticated calls to the FDA GitLab instance (`https://git.fda.gov/api/v4`).
+Auto-loads the `glpat-*` Personal Access Token from Windows Credential Manager (stored when you `git push` to git.fda.gov). Falls back to `GITLAB_TOKEN` env var.
+Includes convenience wrappers: `list_projects`, `find_project_id`, `list_merge_requests`, `get_merge_request`, `create_merge_request`, `update_merge_request`, `approve_merge_request`, `add_mr_note`, `list_branches`, `get_branch`, `list_commits`, `list_issues`, `create_issue`, `list_pipelines`, `trigger_pipeline`, `get_current_user`, `find_user`.
+**Inputs**: `path` (required), `method` (default GET), `body` (dict), `token` (override), `base_url` (override), `verify_ssl` (default False), `params` (dict)
+**Outputs**: `status_code`, `body`, `ok`
+**GitLab version**: 19.0.2-EE — `https://git.fda.gov`
+**Token scopes**: `api`, `read_api`, `read_repository`, `write_repository`, `read_user` (expires 2026-08-14)
+**Env var**: `GITLAB_TOKEN` (override)
+**Access**: FDA GFE laptop only; full-tunnel VPN required.
+**Import**: Use `importlib.util.spec_from_file_location` (directory path contains a hyphen).
+**See**: `skills/gitlab/gitlab-call/SKILL.md` for full docs and `docs/runbooks/RUNBOOK-gitlab-call.md` for setup.
