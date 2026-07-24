@@ -16,6 +16,7 @@ This index maps skill names to their locations and brief descriptions for quick 
 | [section-508-color-palette](skills/section-508-color-palette/SKILL.md) | (prompt) | `skills/section-508-color-palette/` | Accessible color palette helper |
 | [section-508-compliance](skills/section-508-compliance/SKILL.md) | (prompt) | `skills/section-508-compliance/` | Section 508 compliance checker |
 | [serio-dev-environment](skills/serio-dev-environment/SKILL.md) | (prompt) | `skills/serio-dev-environment/` | SERIO WebLogic dev environment setup |
+| [serio-cli](skills/serio-cli/SKILL.md) | PowerShell | `skills/serio-cli/` | **`serio start\|stop\|restart\|build\|status <target>`** — one tool for all SERIO/SERIO+ services |
 | [serio-monolith](skills/serio-monolith/SKILL.md) | PowerShell | `skills/serio-monolith/` | Build and run the SERIO monolith (WebLogic :7001 + Angular :4200, JDK 21) |
 | [serioplus-common-lib](skills/serioplus-common-lib/SKILL.md) | PowerShell | `skills/serioplus-common-lib/` | Build and install serioplus-common-library:13.0.0-SNAPSHOT — always step 1 before building any SERIO+ service |
 | [serioplus-data-services](skills/serioplus-data-services/SKILL.md) | PowerShell | `skills/serioplus-data-services/` | Build and run SERIOPlusDataServices (8 Spring Boot data-tier services :8090-8097 + gateway :8070) |
@@ -39,3 +40,4 @@ This index maps skill names to their locations and brief descriptions for quick 
 | `tools/claude-code/` | Claude Code ELSA launcher, installer, and statusline |
 | `tools/keepass/` | `Get-KeePassAttr.ps1` — PowerShell KeePass helper (dot-source and call) |
 | `tools/serioplus/` | `SerioPlusStack.ps1` — build, start, stop, and status for the full SERIO+ stack (all tiers) |
+| `tools/serio/` | `Serio.ps1` + `Install-SerioAlias.ps1` — the `serio` CLI: start/stop/restart/build/status for all tiers |
