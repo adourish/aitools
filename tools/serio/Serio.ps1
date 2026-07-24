@@ -186,12 +186,16 @@ function Start-Monolith {
     } else {
         $wlLog = "$STATE_DIR\weblogic.log"
         New-Item -ItemType Directory -Force $STATE_DIR | Out-Null
-        $wlArgs = '/c "' + $WL_START + '" > "' + $wlLog + '" 2>&1'
-        $p = Start-Process cmd -ArgumentList $wlArgs -PassThru -WindowStyle Normal
-        Add-State 'weblogic' $p.Id 7001 'monolith' $wlLog
-        Write-Ok "WebLogic starting (PID $($p.Id)) -- waiting for :7001..."
+        # Open WebLogic in a visible window so you can see startup errors
+        $wlProc = Start-Process cmd -ArgumentList '/k', "`"$WL_START`"" -PassThru -WindowStyle Normal
+        $wlProcId = $wlProc.Id
+        Add-State 'weblogic' $wlProcId 7001 'monolith' $wlLog
+        Write-Ok "WebLogic starting (PID $wlProcId) -- watch the WebLogic window for errors"
+        Write-Info "Waiting for :7001 (up to 4 minutes)..."
         if (-not (Wait-For-Port 7001 'WebLogic' 240)) {
-            Write-Fail "WebLogic timed out. Check $wlLog"
+            Write-Fail "WebLogic timed out. Check the WebLogic window for errors."
+            Write-Info "Common causes: datasources misconfigured, JDK mismatch, domain not set up"
+            Write-Info "Run manually: $WL_START"
             return
         }
     }
@@ -244,10 +248,23 @@ function Build-Gateway {
     Write-Step 'Building local-gateway-service'
     if (-not (Use-Jdk 17)) { return }
     Push-Location $gwDir
-    & mvn -DskipTests -nsu clean install
+    # Gateway needs its parent pom resolved -- build with -N skipped, use -nsu
+    & mvn -DskipTests clean package spring-boot:repackage
     $rc = $LASTEXITCODE
     Pop-Location
-    if ($rc -eq 0) { Write-Ok 'local-gateway-service built' } else { Write-Fail 'local-gateway-service build failed' }
+    if ($rc -eq 0) { Write-Ok 'local-gateway-service built' } else { Write-Fail 'local-gateway-service build failed -- check pom parent resolution' }
+}
+
+function Build-DataModule {
+    # Build a single data service module that was missed by the reactor
+    param([string]$module)
+    Write-Step "Building $module"
+    if (-not (Use-Jdk 17)) { return }
+    Push-Location $DATA_REPO
+    & mvn -DskipTests -nsu -pl $module clean install
+    $rc = $LASTEXITCODE
+    Pop-Location
+    if ($rc -eq 0) { Write-Ok "$module built" } else { Write-Fail "$module build failed" }
 }
 
 function Build-App {
@@ -347,8 +364,9 @@ function Invoke-Build {
         'data'       { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices'; Build-Gateway }
         'business'   { Build-Maven $SVC_REPO 'SERIOPlusServices' }
         'app'        { Build-App }
+        'gateway'    { Build-Gateway }
         'all'        { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices'; Build-Gateway; Build-Maven $SVC_REPO 'SERIOPlusServices'; Build-App }
-        default      { Write-Fail "Unknown build target: '$t'  Valid: all | common-lib | data | business | app" }
+        default      { Write-Fail "Unknown build target: '$t'  Valid: all | common-lib | data | business | app | gateway" }
     }
 }
 
