@@ -103,10 +103,10 @@ function Save-State {
 }
 
 function Add-State {
-    param($name, $pid, $port, $tier, $log)
+    param($name, $procId, $port, $tier, $log)
     $state = [System.Collections.Generic.List[object]]::new()
     foreach ($e in @(Load-State)) { if ($e.Name -ne $name) { $state.Add($e) } }
-    $state.Add([pscustomobject]@{ Name=$name; Pid=$pid; Port=$port; Tier=$tier; Log=$log })
+    $state.Add([pscustomobject]@{ Name=$name; Pid=$procId; Port=$port; Tier=$tier; Log=$log })
     Save-State $state
 }
 
