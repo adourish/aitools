@@ -93,13 +93,24 @@ function Find-Jar {
 }
 
 function Load-State {
-    if (Test-Path $STATE_FILE) { Get-Content $STATE_FILE -Raw | ConvertFrom-Json } else { @() }
+    if (-not (Test-Path $STATE_FILE)) { return @() }
+    try {
+        $raw = [System.IO.File]::ReadAllText($STATE_FILE, [System.Text.Encoding]::UTF8)
+        # Strip UTF-8 BOM if present
+        if ($raw.StartsWith([char]0xFEFF)) { $raw = $raw.Substring(1) }
+        $parsed = $raw | ConvertFrom-Json
+        if ($parsed -is [array]) { return $parsed }
+        if ($parsed -is [System.Management.Automation.PSCustomObject]) { return @($parsed) }
+        return @()
+    } catch { return @() }
 }
 
 function Save-State {
     param($s)
     New-Item -ItemType Directory -Force $STATE_DIR | Out-Null
-    ($s | ConvertTo-Json -Depth 5) | Set-Content $STATE_FILE -Encoding utf8
+    # Write without BOM so Load-State can parse it cleanly
+    $json = $s | ConvertTo-Json -Depth 5
+    [System.IO.File]::WriteAllText($STATE_FILE, $json, (New-Object System.Text.UTF8Encoding $false))
 }
 
 function Add-State {
@@ -214,14 +225,29 @@ function Build-CommonLib {
 }
 
 function Build-Maven {
-    param($repo, $label)
+    param($repo, $label, [string]$module = '')
     Write-Step "Building $label"
     if (-not (Use-Jdk 17)) { return }
     Push-Location $repo
-    & mvn -DskipTests -nsu clean install
+    $mvnArgs = @('-DskipTests', '-nsu', 'clean', 'install')
+    if ($module) { $mvnArgs += @('-pl', $module, '--also-make') }
+    & mvn @mvnArgs
     $rc = $LASTEXITCODE
     Pop-Location
     if ($rc -eq 0) { Write-Ok "$label built" } else { Write-Fail "$label build failed" }
+}
+
+function Build-Gateway {
+    # local-gateway-service is NOT in the main SERIOPlusDataServices reactor -- build separately
+    $gwDir = "$DATA_REPO\local-gateway-service"
+    if (-not (Test-Path "$gwDir\pom.xml")) { Write-Warn 'local-gateway-service not found -- skipping'; return }
+    Write-Step 'Building local-gateway-service'
+    if (-not (Use-Jdk 17)) { return }
+    Push-Location $gwDir
+    & mvn -DskipTests -nsu clean install
+    $rc = $LASTEXITCODE
+    Pop-Location
+    if ($rc -eq 0) { Write-Ok 'local-gateway-service built' } else { Write-Fail 'local-gateway-service build failed' }
 }
 
 function Build-App {
@@ -318,10 +344,10 @@ function Invoke-Build {
     param($t)
     switch ($t) {
         'common-lib' { Build-CommonLib }
-        'data'       { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices' }
+        'data'       { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices'; Build-Gateway }
         'business'   { Build-Maven $SVC_REPO 'SERIOPlusServices' }
         'app'        { Build-App }
-        'all'        { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices'; Build-Maven $SVC_REPO 'SERIOPlusServices'; Build-App }
+        'all'        { Build-CommonLib; Build-Maven $DATA_REPO 'SERIOPlusDataServices'; Build-Gateway; Build-Maven $SVC_REPO 'SERIOPlusServices'; Build-App }
         default      { Write-Fail "Unknown build target: '$t'  Valid: all | common-lib | data | business | app" }
     }
 }
