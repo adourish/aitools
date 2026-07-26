@@ -10,6 +10,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+AI_MODEL = "anthropic/claude-haiku-4-5-20251001"
+
 class AmplenoteTools:
     """Amplenote operations for MCP server"""
     
@@ -90,7 +92,7 @@ class AmplenoteTools:
                 except Exception as refresh_error:
                     logger.error(f"Failed to refresh Amplenote token: {refresh_error}")
                     print("\n" + "=" * 70)
-                    print("⚠️  AMPLENOTE TOKEN REFRESH FAILED")
+                    print("\u26a0\ufe0f  AMPLENOTE TOKEN REFRESH FAILED")
                     print("=" * 70)
                     print("\nAutomatic token refresh failed.")
                     print("\nTo manually refresh the token, run:")
@@ -399,7 +401,7 @@ class AmplenoteTools:
             
             # Generate AI summary
             if not await self._ensure_openrouter_key():
-                return "• No AI summary available (OpenRouter key not configured)"
+                return "\u2022 No AI summary available (OpenRouter key not configured)"
             
             import requests
             prompt = f"""Analyze this day's schedule and create a bulleted executive summary.
@@ -412,7 +414,7 @@ Create 3-5 bullet points covering:
 - Notable updates or responses received
 - Any conflicts or scheduling considerations
 
-Format as bullet points starting with • or -. Be specific about WHO responded and WHAT they said if relevant."""
+Format as bullet points starting with \u2022 or -. Be specific about WHO responded and WHAT they said if relevant."""
 
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
@@ -422,7 +424,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -444,7 +446,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
     async def update_daily_note_with_plan(self, plan: Dict[str, Any]) -> bool:
         """Create/update single daily plan note using INSERT_NODES for proper rendering"""
         try:
-            static_title = "📋 Daily Plan"
+            static_title = "\U0001f4cb Daily Plan"
 
             # Find existing note to replace
             all_notes = await self.get_notes(tag='daily-plan')
@@ -456,7 +458,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 try:
                     if isinstance(note_item, dict) and note_item.get('name', '') == static_title:
                         existing_note_uuid = note_item.get('uuid')
-                        logger.info(f"✓ Found existing daily plan note: {static_title} (UUID: {existing_note_uuid})")
+                        logger.info(f"\u2713 Found existing daily plan note: {static_title} (UUID: {existing_note_uuid})")
                         break
                 except Exception as e:
                     logger.warning(f"Error checking note: {e}")
@@ -547,7 +549,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         now = datetime.now()
 
         # ── Header ──
-        nodes.append(self._make_paragraph(f"📅 {now.strftime('%A, %B %d, %Y')}"))
+        nodes.append(self._make_paragraph(f"\U0001f4c5 {now.strftime('%A, %B %d, %Y')}"))
 
         # ── Today's Schedule ──
         today_events = plan.get('today_events', [])
@@ -563,7 +565,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 tmrw_date = (now + timedelta(days=1)).strftime('%A %b %d')
             except Exception:
                 tmrw_date = "Tomorrow"
-            nodes.append(self._make_heading(f"Tomorrow — {tmrw_date}", 2))
+            nodes.append(self._make_heading(f"Tomorrow \u2014 {tmrw_date}", 2))
             nodes.extend(self._events_to_nodes(tomorrow_events))
 
         # ── Action Items ──
@@ -579,7 +581,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     nodes.append(self._make_task(action, important=True))
                     context = item.get('context', '')
                     if context and context.lower() != 'fyi only':
-                        nodes.append(self._make_paragraph(f"  ↳ {context}"))
+                        nodes.append(self._make_paragraph(f"  \u21b3 {context}"))
                 else:
                     nodes.append(self._make_task(item['title']))
 
@@ -593,7 +595,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
 
         # ── Stale Tasks ──
         if plan.get('stale'):
-            nodes.append(self._make_heading("Stale — Review or Close", 2))
+            nodes.append(self._make_heading("Stale \u2014 Review or Close", 2))
             for task in plan['stale']:
                 days = task.get('days_overdue', '?')
                 due = task.get('due', '')
@@ -603,7 +605,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     title = title.split(' - ')[0]
                 if len(title) > 80:
                     title = title[:77] + "..."
-                nodes.append(self._make_bullet(f"{title} — due {due} ({days}d overdue)"))
+                nodes.append(self._make_bullet(f"{title} \u2014 due {due} ({days}d overdue)"))
 
         # ── Rest of Week ──
         week_events = plan.get('week_events', [])
@@ -619,9 +621,9 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 except ValueError:
                     day_label = date_str
                 if time_str and time_str != 'All day':
-                    nodes.append(self._make_bullet(f"{day_label} — {summary} at {time_str}"))
+                    nodes.append(self._make_bullet(f"{day_label} \u2014 {summary} at {time_str}"))
                 else:
-                    nodes.append(self._make_bullet(f"{day_label} — {summary}"))
+                    nodes.append(self._make_bullet(f"{day_label} \u2014 {summary}"))
 
         # ── Follow-ups ──
         if plan.get('follow_ups'):
@@ -636,9 +638,9 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         action_count = len(plan.get('do_now', []))
         stale_count = len(plan.get('stale', []))
         total_events = len(today_events) + len(tomorrow_events) + len(week_events)
-        nodes.append(self._make_paragraph("—"))
+        nodes.append(self._make_paragraph("\u2014"))
         nodes.append(self._make_paragraph(
-            f"{action_count} actions · {total_events} events · {stale_count} stale · Generated {now.strftime('%I:%M %p')}"
+            f"{action_count} actions \u00b7 {total_events} events \u00b7 {stale_count} stale \u00b7 Generated {now.strftime('%I:%M %p')}"
         ))
 
         return nodes
@@ -650,9 +652,9 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         allday = [e for e in events if not e.get('time') or e['time'] == 'All day']
         timed.sort(key=lambda x: x[1])
         for event, time in timed:
-            nodes.append(self._make_bullet(f"{time} — {event.get('summary', '')}"))
+            nodes.append(self._make_bullet(f"{time} \u2014 {event.get('summary', '')}"))
         for event in allday:
-            nodes.append(self._make_bullet(f"All day — {event.get('summary', '')}"))
+            nodes.append(self._make_bullet(f"All day \u2014 {event.get('summary', '')}"))
         return nodes
 
     def _format_due_date(self, due_str: Optional[str]) -> str:
@@ -672,7 +674,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         lines.append(f"*Generated: {datetime.now().strftime('%Y-%m-%d %I:%M %p')}*\n")
         
         # DO NOW section
-        lines.append("### 🎯 DO NOW")
+        lines.append("### \U0001f3af DO NOW")
         if plan['do_now']:
             for item in plan['do_now']:
                 if item['source'] == 'Email':
@@ -687,7 +689,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
             lines.append("- *No urgent items*")
         
         # DO SOON section
-        lines.append("\n### ⏰ DO SOON")
+        lines.append("\n### \u23f0 DO SOON")
         if plan['do_soon']:
             for item in plan['do_soon']:
                 due_str = f" (due: {item.get('due', 'N/A')})" if item.get('due') else ""
@@ -697,7 +699,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
             lines.append("- *No upcoming items*")
         
         # MONITOR section
-        lines.append("\n### 📋 MONITOR")
+        lines.append("\n### \U0001f4cb MONITOR")
         if plan['monitor']:
             for item in plan['monitor']:
                 lines.append(f"- [ ] {item['title']}")
