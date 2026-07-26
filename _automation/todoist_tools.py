@@ -12,6 +12,8 @@ import json
 
 logger = logging.getLogger(__name__)
 
+AI_MODEL = "anthropic/claude-haiku-4-5-20251001"
+
 class TodoistTools:
     """Todoist operations for MCP server"""
     
@@ -63,7 +65,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -149,7 +151,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -203,7 +205,7 @@ Task:"""
             filtered_tasks = []
             for task in tasks:
                 content = task.get('content', '')
-                if not (content.startswith('🎯 TODAY:') or content.startswith('⏰ SOON:') or content.startswith('📋 Daily Plan -')):
+                if not (content.startswith('\U0001f3af TODAY:') or content.startswith('⏰ SOON:') or content.startswith('\U0001f4cb Daily Plan -')):
                     filtered_tasks.append(task)
             
             logger.info(f"Retrieved {len(filtered_tasks)} tasks from Todoist")
@@ -340,7 +342,7 @@ Task:"""
             deleted_count = 0
             for task in tasks:
                 content = task.get('content', '')
-                if content.startswith('📋 Daily Plan -') or content.startswith('🎯 TODAY:') or content.startswith('⏰ SOON:'):
+                if content.startswith('\U0001f4cb Daily Plan -') or content.startswith('\U0001f3af TODAY:') or content.startswith('⏰ SOON:'):
                     await self.delete_task(task['id'])
                     deleted_count += 1
             
@@ -379,6 +381,7 @@ Task:"""
                 due = item.get('due', 'today')
                 time_info = f" at {item['time']}" if item.get('time') else ''
                 source = item.get('source', 'Unknown')
+                thread_context = ''
                 
                 # Use existing AI summary if available, otherwise use title
                 if source == 'Email' and item.get('ai_summary'):
@@ -396,7 +399,7 @@ Task:"""
                             context_snippet = f" - {first_sentence}"
                     
                     # Create detailed title: Action | From | Context
-                    task_title = f"🎯 {action_task} (from {sender_name}){context_snippet}{time_info}"
+                    task_title = f"\U0001f3af {action_task} (from {sender_name}){context_snippet}{time_info}"
                     # Limit to 250 chars for readability
                     if len(task_title) > 250:
                         task_title = task_title[:247] + "..."
@@ -407,7 +410,7 @@ Task:"""
                         if clean_title.startswith(prefix):
                             clean_title = clean_title[len(prefix):]
                             break
-                    task_title = f"🎯 TODAY: {clean_title}{time_info}"
+                    task_title = f"\U0001f3af TODAY: {clean_title}{time_info}"
                     thread_context = item.get('thread_context', '')
                 
                 # Build detailed description with context
