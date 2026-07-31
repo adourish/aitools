@@ -100,7 +100,6 @@ class GmailTools:
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
             # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
