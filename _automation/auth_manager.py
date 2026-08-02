@@ -6,6 +6,7 @@ Personal services: Gmail, Todoist, Amplenote.
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from google.auth.transport.requests import Request
@@ -16,18 +17,23 @@ from credential_resolver import CredentialResolver
 
 logger = logging.getLogger(__name__)
 
-GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
+_default_gmail_token = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
+GMAIL_TOKEN_PATH = Path(os.environ.get('GMAIL_TOKEN_PATH', str(_default_gmail_token)))
 
 
 class AuthManager:
     """Manages OAuth tokens with automatic refresh via CredentialResolver."""
 
     def __init__(self):
-        self._resolver = CredentialResolver()
+        try:
+            self._resolver = CredentialResolver()
+            logger.info("AuthManager initialized (providers: %s)", self._resolver.providers())
+        except Exception as e:
+            logger.warning("CredentialResolver unavailable (%s) — env var fallback active", e)
+            self._resolver = None
         self._gmail_creds = None
         self._todoist_token = None
         self._amplenote_token = None
-        logger.info("AuthManager initialized (providers: %s)", self._resolver.providers())
 
     async def get_gmail_credentials(self) -> Credentials:
         """Get Gmail credentials from token.json, refreshing if expired."""
@@ -56,21 +62,36 @@ class AuthManager:
     async def get_todoist_token(self) -> str:
         """Get Todoist API token."""
         if not self._todoist_token:
-            self._todoist_token = self._resolver.get("todoist", "credentials.apiToken")
+            env_token = os.environ.get('TODOIST_API_TOKEN')
+            if env_token:
+                self._todoist_token = env_token
+            elif self._resolver:
+                self._todoist_token = self._resolver.get("todoist", "credentials.apiToken")
         return self._todoist_token
 
     async def get_openrouter_key(self) -> str:
         """Get OpenRouter API key."""
-        return self._resolver.get("openrouter", "credentials.apiKey")
+        env_key = os.environ.get('OPENROUTER_API_KEY')
+        if env_key:
+            return env_key
+        if self._resolver:
+            return self._resolver.get("openrouter", "credentials.apiKey")
+        return None
 
     async def get_amplenote_token(self) -> str:
         """Get Amplenote access token."""
         if not self._amplenote_token:
-            self._amplenote_token = self._resolver.get("amplenote", "oauth.accessToken")
+            env_token = os.environ.get('AMPLENOTE_API_TOKEN')
+            if env_token:
+                self._amplenote_token = env_token
+            elif self._resolver:
+                self._amplenote_token = self._resolver.get("amplenote", "oauth.accessToken")
         return self._amplenote_token
 
     async def refresh_amplenote_token(self) -> str:
         """Refresh Amplenote access token and persist via resolver."""
+        if not self._resolver:
+            raise Exception("Amplenote token refresh requires CredentialResolver (not available in env-var mode)")
         client_id     = self._resolver.get("amplenote", "oauth.clientId")
         refresh_token = self._resolver.get("amplenote", "oauth.refreshToken")
 
