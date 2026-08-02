@@ -12,6 +12,8 @@ import json
 
 logger = logging.getLogger(__name__)
 
+AI_MODEL = "anthropic/claude-haiku-4-5-20251001"
+
 class TodoistTools:
     """Todoist operations for MCP server"""
     
@@ -63,7 +65,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -149,7 +151,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -379,6 +381,7 @@ Task:"""
                 due = item.get('due', 'today')
                 time_info = f" at {item['time']}" if item.get('time') else ''
                 source = item.get('source', 'Unknown')
+                thread_context = ''
                 
                 # Use existing AI summary if available, otherwise use title
                 if source == 'Email' and item.get('ai_summary'):

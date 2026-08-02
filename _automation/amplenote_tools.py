@@ -10,6 +10,8 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+AI_MODEL = "anthropic/claude-haiku-4-5-20251001"
+
 class AmplenoteTools:
     """Amplenote operations for MCP server"""
     
@@ -422,7 +424,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": AI_MODEL,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
