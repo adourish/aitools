@@ -56,7 +56,7 @@ class AuthManager:
     async def get_todoist_token(self) -> str:
         """Get Todoist API token."""
         if not self._todoist_token:
-            self._todoist_token = self._resolver.get("todoist", "credentials.apiToken")
+            self._todoist_token = self._resolver.get("todoist", "api.apiToken")
         return self._todoist_token
 
     async def get_openrouter_key(self) -> str:
