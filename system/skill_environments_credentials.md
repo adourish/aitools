@@ -525,22 +525,6 @@ $creds
 
 ### Work & Productivity
 
-#### Microsoft 365 / Microsoft Graph API
-- **API**: Microsoft Graph API v1.0
-- **Auth Type**: OAuth 2.0 Delegated Permissions (user context)
-- **Client ID**: `1e1de7bf-6be5-4795-ad73-bf753ccb5ba5`
-- **Tenant ID**: `31996441-7546-4120-826b-df0c3e239671`
-- **Token Location**: `${PARA_ROOT}\03_Areas\Keys\Microsoft365\token.json`
-- **Purpose**: Work email (Outlook), calendar, SharePoint/OneDrive documents
-- **Scopes**: Mail.Read, Calendars.Read, Files.Read.All, Sites.Read.All, User.Read
-- **Setup**: Run `python setup_microsoft_oauth.py` for user consent flow
-- **Setup Guide**: See `${PARA_ROOT}\01_Projects\Development\OAUTH_SETUP_GUIDE.md`
-- **Endpoints**:
-  - Mail: `https://graph.microsoft.com/v1.0/me/messages`
-  - Calendar: `https://graph.microsoft.com/v1.0/me/events`
-  - Drive: `https://graph.microsoft.com/v1.0/me/drive/recent`
-- **Token Expiry**: 1 hour (requires re-authentication)
-- **Last Updated**: February 22, 2026
 
 #### Azure DevOps
 - **Variables**: `ADO_ORG_URL`, `ADO_PROJECT`, `ADO_PAT`, `ADO_USERNAME`
