@@ -29,7 +29,7 @@ def setup_microsoft_oauth():
     print("="*60)
     print("\nThis will set up access to:")
     print("  - Outlook Email (work)")
-    print("  - SharePoint/OneDrive Documents")
+    print("  - SharePoint Documents")
     print("  - Calendar")
     print("\n" + "="*60)
     
