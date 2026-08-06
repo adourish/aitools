@@ -51,7 +51,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Documents:**
 - ✅ Google Drive (last 7 days)
-- ❌ SharePoint (blocked by admin)
 
 ---
 
@@ -116,14 +115,14 @@ python daily_planner.py
 ============================================================
 DAILY PLAN SUMMARY (Action-Priority Model)
 ============================================================
-🎯 DO NOW (7 items):
+🎯 DO NOW (6 items):
    • RE: [External] Max Dourish—Feb 19 (due 2026-02-22)
    • Max Dourish—Feb 19 (due 2026-02-22)
    • godzilla task 2 (due 2025-11-13)
    • 📅 Cleaners (due 2026-02-23)
    • 📅 Taekwondo (due 2026-02-23)
 
-⏰ DO SOON (6 items):
+⏰ DO SOON (5 items):
    • Do taxes 💵 (due 2026-03-01)
    • 📅 Cancelled TKD February 25 Wednesday (due 2026-02-25)
    • 📅 Book Club (due 2026-02-25)
@@ -148,7 +147,6 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 
