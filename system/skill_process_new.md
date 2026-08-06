@@ -39,7 +39,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Emails:**
 - ✅ Gmail (last 1 month) - Urgent emails and reference info
-- ❌ Microsoft 365 Outlook (blocked by admin)
 
 **Tasks & Calendar:**
 - ✅ Todoist (all active tasks)
@@ -51,7 +50,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Documents:**
 - ✅ Google Drive (last 7 days)
-- ❌ SharePoint (blocked by admin)
 
 ---
 
@@ -91,7 +89,6 @@ python daily_planner.py
 ```
 ✅ Gmail & Calendar authenticated
 ✅ Google Drive authenticated
-❌ Microsoft 365 token not found
 
 ╔════════════════════════════════════════════════════════════╗
 ║              Daily Planner - Generating Plan               ║
@@ -100,8 +97,6 @@ python daily_planner.py
 📧 Checking Gmail (last 1 month)...
    Found 3 urgent items from Gmail
    Found 3 reference emails with important info
-📧 Checking Outlook (last 1 month)...
-   Found 0 urgent items from Outlook
 📋 Fetching Todoist tasks...
    Found 2 active tasks
 📅 Checking Google Calendar (next 7 days)...
@@ -148,7 +143,6 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 
@@ -219,10 +213,6 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - Recently modified documents
 - Shows what you're working on
 
-### ❌ Requires Admin Approval
-
-**Microsoft 365 Outlook** - Blocked by organization policy  
-**SharePoint** - Blocked by organization policy
 
 ---
 
@@ -341,10 +331,6 @@ GMAIL_SCOPES = [
 ### "Google Drive API not enabled"
 
 Already enabled. If you see this error, it means the API was just enabled and needs a few minutes to propagate. Wait 5 minutes and try again.
-
-### "Microsoft 365 token not found"
-
-Expected. Microsoft 365 (Outlook/SharePoint) requires admin approval from your IT department. The system works fine without it using Gmail/Calendar/Drive.
 
 ### "No urgent emails found"
 
@@ -510,11 +496,6 @@ python daily_planner.py
 - OAuth flow will trigger automatically
 - User signs in once
 - System continues
-
-**If you see "Microsoft 365 token not found":**
-- This is expected and normal
-- System works fine without it
-- Don't try to fix it (requires admin approval)
 
 **The system is designed to be fully autonomous. Trust it.**
 
