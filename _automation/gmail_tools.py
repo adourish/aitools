@@ -99,8 +99,6 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
@@ -112,7 +110,6 @@ class GmailTools:
             'appointment reminder', 'appointment confirmed',
             'scheduled for', 'appointment on',
             'field trip', 'permission slip',
-            'registration due', 'renewal due', 'expires',
             'property maintenance', 'on site', 'service scheduled',
             'today at', 'this afternoon', 'this evening',
             'same day', 'deadline today',
