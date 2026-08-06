@@ -305,21 +305,90 @@ Task:"""
     async def delete_task(self, task_id: str) -> bool:
         """Delete a task"""
         headers = await self._get_headers()
-        
+
         try:
             response = requests.delete(
                 f"{self.base_url}/tasks/{task_id}",
                 headers=headers
             )
             response.raise_for_status()
-            
+
             logger.info(f"Deleted task: {task_id}")
             return True
-        
+
         except Exception as e:
             logger.error(f"Error deleting Todoist task: {e}")
             raise
-    
+
+    async def flush_old_daily_plan_tasks(self) -> int:
+        """Comprehensively delete all old daily plan tasks (all formats)"""
+        headers = await self._get_headers()
+        deleted_count = 0
+
+        try:
+            all_tasks = await self.get_tasks()
+
+            # Patterns to identify daily plan tasks
+            daily_plan_patterns = [
+                'daily-plan',  # Label
+                '📋',  # Emoji prefix
+                '🎯 TODAY:',
+                '⏰ SOON:',
+                '🎯 ',
+                '🔴',  # Priority colors used in old format
+                '⚠️',
+                'ℹ️',
+            ]
+
+            descriptions_containing = [
+                'Daily Planner',
+                'Source: Email',
+                'From:',  # Email attribution in description
+                'Calendar event',
+            ]
+
+            for task in all_tasks:
+                content = task.get('content', '')
+                labels = task.get('labels', [])
+                description = task.get('description', '')
+
+                # Check if task should be deleted
+                should_delete = False
+
+                # Check labels
+                if 'daily-plan' in labels:
+                    should_delete = True
+
+                # Check content patterns
+                if not should_delete:
+                    for pattern in daily_plan_patterns:
+                        if pattern in content:
+                            should_delete = True
+                            break
+
+                # Check description patterns
+                if not should_delete:
+                    for pattern in descriptions_containing:
+                        if pattern in description:
+                            should_delete = True
+                            break
+
+                # Delete if matched
+                if should_delete:
+                    try:
+                        await self.delete_task(task['id'])
+                        deleted_count += 1
+                        logger.info(f"Flushed old task: {content[:60]}")
+                    except Exception as e:
+                        logger.warning(f"Failed to delete task {task['id']}: {e}")
+
+            logger.info(f"✓ Flushed {deleted_count} old daily plan tasks")
+            return deleted_count
+
+        except Exception as e:
+            logger.error(f"Error flushing old daily plan tasks: {e}")
+            raise
+
     async def create_daily_plan_tasks(self, do_now_items: List[Dict[str, Any]], do_soon_items: List[Dict[str, Any]]) -> bool:
         """Create individual Todoist tasks for DakBoard (kill and fill approach)"""
         from datetime import datetime

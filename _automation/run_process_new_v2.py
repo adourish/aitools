@@ -326,25 +326,11 @@ async def process_new_comprehensive():
                 break
 
     # Step 8: Create individual Todoist tasks for each action
-    logger.info("\n📋 STEP 8: Creating individual Todoist tasks...")
+    logger.info("\n📋 STEP 8: Flushing old tasks and creating new ones...")
 
     try:
-        # Delete old daily plan tasks first (including legacy formats)
-        all_tasks = await todoist.get_tasks()
-        legacy_prefixes = ('📋', '🎯 TODAY:', '⏰ SOON:', '🎯 ')
-        for task in all_tasks:
-            content = task.get('content', '')
-            labels = task.get('labels', [])
-            description = task.get('description', '')
-            is_daily_plan = (
-                'daily-plan' in labels
-                or any(content.startswith(p) for p in legacy_prefixes)
-                or 'Daily Planner' in description
-                or 'Source: Email' in description
-            )
-            if is_daily_plan:
-                await todoist.delete_task(task['id'])
-                logger.info(f"   Deleted old task: {content[:50]}")
+        # Comprehensively flush ALL old daily plan tasks (all formats and labels)
+        flushed_count = await todoist.flush_old_daily_plan_tasks()
         
         created_count = 0
         seen_actions = set()  # Track normalized actions to prevent duplicates

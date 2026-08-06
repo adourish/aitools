@@ -24,7 +24,7 @@
         "daily"
       ],
       "description": "Smart Kanban board generation and task prioritization",
-      "command": "cd \"G:\\My Drive\\06_Skills\\_tools\" && python run_process_new.py",
+      "command": "cd \"G:\\My Drive\\06_Skills\\_tools\" && python run_process_new_v2.py",
       "frequency": "daily",
       "difficulty": "beginner",
       "dependencies": [
@@ -918,7 +918,7 @@
         "comprehensive"
       ],
       "description": "Complete workflow for processing new items",
-      "command": "cd \"G:\\My Drive\\06_Skills\\_tools\" && python run_process_new.py",
+      "command": "cd \"G:\\My Drive\\06_Skills\\_tools\" && python run_process_new_v2.py",
       "frequency": "daily",
       "difficulty": "beginner",
       "dependencies": [
