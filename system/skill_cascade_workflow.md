@@ -224,12 +224,6 @@ USER REQUEST
     │   │   ├─→ Endpoint: /drive/v3/files
     │   │   ├─→ Auth: OAuth with Drive scope
     │   │   └─→ Track: Docs, Sheets, Slides
-    │   │
-    │   └─→ SharePoint/OneDrive (last 7 days)
-    │       ├─→ API: Microsoft Graph v1.0
-    │       ├─→ Endpoint: /me/drive/recent
-    │       ├─→ Auth: OAuth delegated permissions
-    │       └─→ Track: Word, Excel, PowerPoint, PDFs
     │
     ├─→ Deduplicate across all sources
     │
@@ -242,7 +236,7 @@ USER REQUEST
         ├─→ 📅 Tomorrow (due tomorrow)
         ├─→ 📆 This Week (due within 7 days)
         ├─→ 📦 Backlog (no deadline)
-        ├─→ 📄 Documents in Progress (Google Drive + SharePoint)
+        ├─→ 📄 Documents in Progress (Google Drive)
         └─→ 📧 Email Summary (Gmail + Outlook counts)
 ```
 
@@ -324,11 +318,6 @@ Step 3: Collect Data from ALL Sources (Work + Personal)
     ├─→ Google Drive API (last 7 days)
     │   └─→ Recently modified files
     ↓
-    📄 WORK DOCUMENTS
-    ├─→ SharePoint via Microsoft Graph (last 7 days)
-    │   ├─→ Endpoint: /me/drive/recent
-    │   └─→ Recently accessed files
-    ↓
 Step 4: Smart Processing
     • Deduplicate across all sources
     • Extract deadlines from emails
@@ -342,9 +331,7 @@ Step 5: Create ONE Unified Amplenote Daily Plan
     ├─→ 📅 Tomorrow
     ├─→ 📆 This Week
     ├─→ 📦 Backlog
-    ├─→ 📄 Documents in Progress
-    │   ├─→ Google Drive files
-    │   └─→ SharePoint files
+    ├─→ 📄 Documents in Progress (Google Drive)
     └─→ 📧 Email Summary
         ├─→ Gmail: X actionable items
         └─→ Outlook: Y actionable items
@@ -356,7 +343,7 @@ Step 6: Execute Commands
 Result: ONE Kanban board with complete personal + work context
 ```
 
-**Key Point:** All sources (Gmail, Outlook, Todoist, Google Drive, SharePoint) are scanned and combined into a **single holistic daily plan** in Amplenote. No separate work/personal boards - everything in one view.
+**Key Point:** All sources (Gmail, Todoist, Google Drive) are scanned and combined into a **single holistic daily plan** in Amplenote. No separate work/personal boards - everything in one view.
 
 ---
 

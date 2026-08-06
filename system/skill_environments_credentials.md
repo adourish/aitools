@@ -531,7 +531,7 @@ $creds
 - **Client ID**: `1e1de7bf-6be5-4795-ad73-bf753ccb5ba5`
 - **Tenant ID**: `31996441-7546-4120-826b-df0c3e239671`
 - **Token Location**: `${PARA_ROOT}\03_Areas\Keys\Microsoft365\token.json`
-- **Purpose**: Work email (Outlook), calendar, SharePoint/OneDrive documents
+- **Purpose**: Work email (Outlook), calendar (disabled)
 - **Scopes**: Mail.Read, Calendars.Read, Files.Read.All, Sites.Read.All, User.Read
 - **Setup**: Run `python setup_microsoft_oauth.py` for user consent flow
 - **Setup Guide**: See `${PARA_ROOT}\01_Projects\Development\OAUTH_SETUP_GUIDE.md`

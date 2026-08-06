@@ -148,7 +148,7 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
+🎯 TODAY: 📅 Taekwondo at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 

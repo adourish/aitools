@@ -104,11 +104,7 @@
   - API: Google Drive API v3
   - Endpoint: `/drive/v3/files`
   - Auth: OAuth 2.0 with Drive scope
-- ✅ **SharePoint/OneDrive**: Recently accessed work documents (last 7 days)
-  - API: Microsoft Graph API v1.0
-  - Endpoint: `https://graph.microsoft.com/v1.0/me/drive/recent`
-  - Auth: OAuth 2.0 delegated permissions
-- ✅ **File types**: Docs, Sheets, Slides, Word, Excel, PowerPoint, PDFs
+- ✅ **File types**: Docs, Sheets, Slides, PDFs
 - ✅ **Shared files**: Documents shared with you requiring review
 
 ### Document Info Displayed:
