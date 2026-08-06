@@ -138,7 +138,12 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up / account notifications (informational only)
+            'sign up', 'signup', 'signed up', 'verify your email', 'confirm your email',
+            'activate your account', 'complete your registration',
+            'account confirmation', 'email verification', 'verify your account',
+            'welcome to your new account', 'you have successfully registered',
         ]
         
         self.reference_emails = []
