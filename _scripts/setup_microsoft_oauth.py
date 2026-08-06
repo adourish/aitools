@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Microsoft 365 OAuth Setup
-Sets up delegated permissions for Outlook email and SharePoint documents
+Sets up delegated permissions for Outlook email and Calendar
 """
 
 import os
@@ -17,8 +17,6 @@ MS_TOKEN_PATH = r'G:\My Drive\03_Areas\Keys\Microsoft365\token.json'
 SCOPES = [
     'https://graph.microsoft.com/Mail.Read',
     'https://graph.microsoft.com/Calendars.Read',
-    'https://graph.microsoft.com/Files.Read.All',
-    'https://graph.microsoft.com/Sites.Read.All',
     'https://graph.microsoft.com/User.Read'
 ]
 
@@ -29,7 +27,6 @@ def setup_microsoft_oauth():
     print("="*60)
     print("\nThis will set up access to:")
     print("  - Outlook Email (work)")
-    print("  - SharePoint/OneDrive Documents")
     print("  - Calendar")
     print("\n" + "="*60)
     
