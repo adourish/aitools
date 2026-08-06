@@ -63,7 +63,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -149,7 +149,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -381,6 +381,7 @@ Task:"""
                 source = item.get('source', 'Unknown')
                 
                 # Use existing AI summary if available, otherwise use title
+                thread_context = ''
                 if source == 'Email' and item.get('ai_summary'):
                     # Build detailed task title for DakBoard visibility
                     action_task = item['ai_summary']
@@ -408,7 +409,6 @@ Task:"""
                             clean_title = clean_title[len(prefix):]
                             break
                     task_title = f"🎯 TODAY: {clean_title}{time_info}"
-                    thread_context = item.get('thread_context', '')
                 
                 # Build detailed description with context
                 description_parts = [f"**Source:** {source}"]
