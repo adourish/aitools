@@ -1,0 +1,130 @@
+{
+  "generated": "2026-04-21T15:15:00",
+  "date": "2026-04-21",
+  "sources_scanned": ["gmail", "google_calendar", "google_drive"],
+  "do_now": [
+    {
+      "id": "vote_today",
+      "title": "VOTE TODAY - Constitutional Amendment special election",
+      "source": "calendar",
+      "due": "2026-04-21",
+      "priority": 4,
+      "notes": "Statewide election - April 21, 2026. Also: kids have NO SCHOOL today (Churchill Road Elementary - Student Holiday / Teacher Workday)."
+    },
+    {
+      "id": "tickets_tonight",
+      "title": "BUY TICKETS TONIGHT - CRS v. SHS 6th Grade Basketball Game (closes 4/21 at 11:59pm)",
+      "source": "gmail",
+      "due": "2026-04-21",
+      "priority": 4,
+      "notes": "Online ticket sales close Tuesday 4/21 at 11:59pm. Walk-in $5/pp available after. From: notify@membershiptoolkit.com. Volunteers welcome for registration/concessions (email Erin at treasurer@...)."
+    },
+    {
+      "id": "notion_passkey",
+      "title": "CHECK NOTION SECURITY - Passkey was added to your account (verify it was you)",
+      "source": "gmail",
+      "due": "2026-04-21",
+      "priority": 4,
+      "notes": "Email from notify@updates.notion.so on 2026-04-20: A passkey was added to your account from Google Password Manager device. If this was not you, go to account settings immediately."
+    },
+    {
+      "id": "no_school",
+      "title": "NO SCHOOL TODAY - Kids home (Churchill Road - Student Holiday/Teacher Workday)",
+      "source": "calendar",
+      "due": "2026-04-21",
+      "priority": 4,
+      "notes": "All day event today. Also: 2nd grade musical - Save the Date (from teacher lkprescott@fcps.edu weekly agenda)."
+    }
+  ],
+  "do_soon": [
+    {
+      "id": "therapy_thu",
+      "title": "THERAPY - Krista Hummer LPC/LMFT at 3:00 PM - McLean, VA",
+      "source": "calendar",
+      "due": "2026-04-24",
+      "priority": 3,
+      "notes": "Thursday April 24, 3:00-4:00 PM ET. Location: McLean, VA. McLean Therapy, (703) 822-1210. Google Meet: meet.google.com/geg-yqvi-wez"
+    },
+    {
+      "id": "trade_desk_vote",
+      "title": "VOTE: THE TRADE DESK Annual Meeting (Fidelity shareholder vote)",
+      "source": "gmail",
+      "due": "2026-04-25",
+      "priority": 2,
+      "notes": "From: Fidelity.Investments.email@shareholderdocs.fidelity.com on 2026-04-18. Vote on important shareholder matters for THE TRADE DESK, INC."
+    },
+    {
+      "id": "dominion_rebates",
+      "title": "SIGN UP: Dominion Energy Peak Time Rebates (deadline April 30)",
+      "source": "gmail",
+      "due": "2026-04-30",
+      "priority": 2,
+      "notes": "From: info@dominionenergyptr.com - Sign up by April 30th. No obligation, you decide if/how to save energy."
+    },
+    {
+      "id": "tax_check",
+      "title": "CHECK TAX FILING - Deadline was April 17 (did you file?)",
+      "source": "gmail",
+      "due": "2026-04-22",
+      "priority": 3,
+      "notes": "TurboTax email on 2026-04-17: 'The tax deadline was yesterday'. Confirm filing status or extension."
+    },
+    {
+      "id": "bofa_statement",
+      "title": "REVIEW Bank of America statement (April 2026 available)",
+      "source": "gmail",
+      "due": "2026-04-25",
+      "priority": 2,
+      "notes": "From: onlinebanking@ealerts.bankofamerica.com - Your statement is available for Anthony Checking 3542."
+    }
+  ],
+  "monitor": [
+    {
+      "id": "rei_401k",
+      "title": "REI Systems 401k quarterly statement available (Fidelity)",
+      "source": "gmail",
+      "notes": "From: Fidelity.Investments@mail.fidelity.com - REI SYSTEMS, INC quarterly retirement plan statement available."
+    },
+    {
+      "id": "optum_hsa",
+      "title": "HSA March statement ready (Optum Financial, account ending 346)",
+      "source": "gmail",
+      "notes": "From: OptumFinancial@information.optum.com - March HSA statement ready. Sign in to view."
+    }
+  ],
+  "reference": [
+    {
+      "title": "Bank of America Checking 3542",
+      "detail": "Available balance: $29,274.01 (as of April 21, 2026)"
+    },
+    {
+      "title": "Bank of America Checking 3542",
+      "detail": "Monthly statement available for April 2026"
+    },
+    {
+      "title": "Optum Financial HSA",
+      "detail": "Account ending 346 - March statement ready"
+    },
+    {
+      "title": "REI Systems 401k (Fidelity)",
+      "detail": "Quarterly statement available - login to review"
+    }
+  ],
+  "context": {
+    "recent_drive_activity": [
+      "database-bhcmis.json updated 2026-04-20 (credentials/config)",
+      "devops-rei-ado.json updated 2026-04-20 (ADO credentials)"
+    ],
+    "calendar_this_week": [
+      "Apr 21 - NO SCHOOL + Constitutional Amendment Election",
+      "Apr 24 (Thu) - Therapy 3:00-4:00 PM McLean VA"
+    ]
+  },
+  "stats": {
+    "gmail_scanned": 30,
+    "actionable_emails": 5,
+    "reference_emails": 4,
+    "calendar_events": 3,
+    "drive_files_recent": 8
+  }
+}
