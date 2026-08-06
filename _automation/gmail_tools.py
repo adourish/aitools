@@ -70,7 +70,7 @@ class GmailTools:
             'tiktok.com',
             'marketing@', 'promo@', 'newsletter@',
             'redditmail.com', 'email.monarch.com', 'rescueme.org',
-            'membershipto', 'bankofamerica.com',
+            'bankofamerica.com',
             'ealerts.', 'USPSInformeddelivery', 'schwab.com',
             'creditkarma.com', 'omadahealth.com',
             'congressman', 'senator', 'representative', 'house.gov',
@@ -99,8 +99,6 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
@@ -127,7 +125,7 @@ class GmailTools:
             # Promotional/sales keywords
             'deal ends', 'wish list', 'sale', 'discount',
             'trade up', 'own apple for less',
-            'view as a web page', 'membership now',
+            'view as a web page',
             'newness for your littles', 'latest and greatest',
             # Savings/deals
             'instant savings', 'save up to', 'up to $', 'off before',
