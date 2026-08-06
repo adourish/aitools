@@ -219,17 +219,11 @@ USER REQUEST
     │
     ├─→ 📄 DOCUMENT SOURCES
     │   │
-    │   ├─→ Google Drive (last 7 days)
-    │   │   ├─→ API: Google Drive API v3
-    │   │   ├─→ Endpoint: /drive/v3/files
-    │   │   ├─→ Auth: OAuth with Drive scope
-    │   │   └─→ Track: Docs, Sheets, Slides
-    │   │
-    │   └─→ SharePoint/OneDrive (last 7 days)
-    │       ├─→ API: Microsoft Graph v1.0
-    │       ├─→ Endpoint: /me/drive/recent
-    │       ├─→ Auth: OAuth delegated permissions
-    │       └─→ Track: Word, Excel, PowerPoint, PDFs
+    │   └─→ Google Drive (last 7 days)
+    │       ├─→ API: Google Drive API v3
+    │       ├─→ Endpoint: /drive/v3/files
+    │       ├─→ Auth: OAuth with Drive scope
+    │       └─→ Track: Docs, Sheets, Slides
     │
     ├─→ Deduplicate across all sources
     │
