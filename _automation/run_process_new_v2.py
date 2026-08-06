@@ -120,9 +120,9 @@ async def process_new_comprehensive():
         logger.info(f"   Found {len(no_date_tasks)} tasks with no due date")
     
     logger.info("\n📅 STEP 5: Fetching calendar events...")
+    tomorrow = (today_dt + timedelta(days=1)).strftime("%Y-%m-%d")
     try:
         events = await calendar.get_events(days_ahead=7)  # Get full week
-        tomorrow = (today_dt + timedelta(days=1)).strftime("%Y-%m-%d")
         today_events = [e for e in events if e.get('date') == today]
         tomorrow_events = [e for e in events if e.get('date') == tomorrow]
         logger.info(f"   Found {len(today_events)} events today, {len(tomorrow_events)} tomorrow")
@@ -131,6 +131,7 @@ async def process_new_comprehensive():
         logger.warning(f"   Calendar unavailable (insufficient scopes or auth): {e}")
         events = []
         today_events = []
+        tomorrow_events = []
     
     # Step 5: Create comprehensive summary
     logger.info("\n📝 STEP 6: Creating comprehensive daily summary...")
@@ -494,6 +495,7 @@ async def process_new_comprehensive():
         # Create tasks for NON-ROUTINE calendar events
         # Recurring events (regular taekwondo, cleaners, etc.) are skipped
         # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Sign-up events are always skipped regardless of recurrence.
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -505,6 +507,8 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        skip_keywords = ['signup', 'sign up', 'sign-up']
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +517,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            # Always skip sign-up events
+            if any(kw in summary_lower for kw in skip_keywords):
+                logger.info(f"   Skipped sign-up event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
