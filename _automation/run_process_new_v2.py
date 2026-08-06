@@ -514,6 +514,11 @@ async def process_new_comprehensive():
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
 
+            # Skip sign-up related events
+            if any(kw in summary_lower for kw in ['signup', 'sign up', 'sign-up', 'registration']):
+                logger.info(f"   Skipped signup event: {summary[:60]}")
+                continue
+
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
             if is_recurring and not needs_attention:

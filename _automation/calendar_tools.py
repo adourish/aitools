@@ -54,6 +54,10 @@ class CalendarTools:
                     if not attendees or len(attendees) <= 1:
                         continue
 
+                # Skip sign-up related events
+                if any(word in summary for word in ['signup', 'sign up', 'sign-up', 'registration']):
+                    continue
+
                 start = event['start'].get('dateTime', event['start'].get('date'))
                 summary = event.get('summary', 'No title')
                 organizer = event.get('organizer', {}).get('email', 'Unknown')
