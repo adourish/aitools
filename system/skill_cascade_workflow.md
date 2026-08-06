@@ -224,12 +224,6 @@ USER REQUEST
     │   │   ├─→ Endpoint: /drive/v3/files
     │   │   ├─→ Auth: OAuth with Drive scope
     │   │   └─→ Track: Docs, Sheets, Slides
-    │   │
-    │   └─→ SharePoint/OneDrive (last 7 days)
-    │       ├─→ API: Microsoft Graph v1.0
-    │       ├─→ Endpoint: /me/drive/recent
-    │       ├─→ Auth: OAuth delegated permissions
-    │       └─→ Track: Word, Excel, PowerPoint, PDFs
     │
     ├─→ Deduplicate across all sources
     │
