@@ -2,28 +2,28 @@
 
 **One-Command Daily Planning: Autonomous Gmail + Calendar + Todoist + Drive Integration**
 
-**Version:** 2.0.0 - Fully Autonomous  
-**Last Updated:** February 22, 2026  
+**Version:** 2.1.0 - Fully Autonomous  
+**Last Updated:** May 28, 2026  
 **Guide Number:** 09
 
 ---
 
 ## ⚠️ IMPORTANT FOR AI AGENTS
 
-**USE THIS COMMAND (MCP Server):**
+**USE THIS COMMAND (V2 - MCP Server):**
 ```powershell
 cd "G:\My Drive\06_Master_Guides\MCP_Server"
-python run_process_new.py
+python run_process_new_v2.py
 ```
 
-**DO NOT use `Scripts/daily_planner.py` unless you want to see a wrapper message.**
-
-The MCP Server has all the latest features including:
+The MCP Server V2 has all the latest features including:
 - Smart email filtering (no promotional emails)
 - Google Drive document scanning
 - File system scanning (Inbox, Downloads)
 - Automatic Todoist task creation (DakBoard compatible)
 - Automatic Amplenote note creation (full content)
+- Comprehensive thread analysis with Claude AI
+- Sign-up/registration events automatically filtered
 
 ---
 
@@ -39,7 +39,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Emails:**
 - ✅ Gmail (last 1 month) - Urgent emails and reference info
-- ❌ Microsoft 365 Outlook (blocked by admin)
 
 **Tasks & Calendar:**
 - ✅ Todoist (all active tasks)
@@ -51,25 +50,16 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Documents:**
 - ✅ Google Drive (last 7 days)
-- ❌ SharePoint (blocked by admin)
 
 ---
 
 ## Quick Start (30 seconds)
 
-**RECOMMENDED - Use MCP Server (Latest Features):**
+**RECOMMENDED - Use MCP Server V2 (Latest Features):**
 ```powershell
 cd "G:\My Drive\06_Master_Guides\MCP_Server"
-python run_process_new.py
+python run_process_new_v2.py
 ```
-
-**OR - Use Scripts Wrapper (Backward Compatible):**
-```powershell
-cd "G:\My Drive\06_Master_Guides\Scripts"
-python daily_planner.py
-```
-
-**Both methods call the same MCP server code.**
 
 **That's it.** Everything else is automatic:
 - ✅ Auto-authenticates Gmail/Calendar/Drive (refreshes tokens or triggers OAuth)
@@ -77,8 +67,10 @@ python daily_planner.py
 - ✅ Filters out spam/newsletters/political emails
 - ✅ Detects reference emails (account numbers, confirmations)
 - ✅ Categorizes by Action-Priority (DO NOW/SOON/MONITOR)
-- ✅ Generates daily plan JSON
+- ✅ Generates comprehensive analysis JSON
 - ✅ Shows summary in terminal
+- ✅ Creates Todoist tasks automatically
+- ✅ Updates Amplenote daily note automatically
 
 **No prompts. No questions. No configuration needed.**
 
@@ -91,7 +83,6 @@ python daily_planner.py
 ```
 ✅ Gmail & Calendar authenticated
 ✅ Google Drive authenticated
-❌ Microsoft 365 token not found
 
 ╔════════════════════════════════════════════════════════════╗
 ║              Daily Planner - Generating Plan               ║
@@ -100,8 +91,6 @@ python daily_planner.py
 📧 Checking Gmail (last 1 month)...
    Found 3 urgent items from Gmail
    Found 3 reference emails with important info
-📧 Checking Outlook (last 1 month)...
-   Found 0 urgent items from Outlook
 📋 Fetching Todoist tasks...
    Found 2 active tasks
 📅 Checking Google Calendar (next 7 days)...
@@ -111,22 +100,22 @@ python daily_planner.py
 
 ✨ Total unique items: 14
 
-💾 Plan saved to: daily_plan_20260222.json
+💾 Analysis saved to: comprehensive_analysis_20260528_130921.json
 
 ============================================================
 DAILY PLAN SUMMARY (Action-Priority Model)
 ============================================================
 🎯 DO NOW (7 items):
-   • RE: [External] Max Dourish—Feb 19 (due 2026-02-22)
-   • Max Dourish—Feb 19 (due 2026-02-22)
+   • RE: [External] Max Dourish—Feb 19 (due 2026-05-28)
+   • Max Dourish—Feb 19 (due 2026-05-28)
    • godzilla task 2 (due 2025-11-13)
-   • 📅 Cleaners (due 2026-02-23)
-   • 📅 Taekwondo (due 2026-02-23)
+   • 📅 Cleaners (due 2026-05-29)
+   • 📅 Taekwondo (due 2026-05-29)
 
 ⏰ DO SOON (6 items):
-   • Do taxes 💵 (due 2026-03-01)
-   • 📅 Cancelled TKD February 25 Wednesday (due 2026-02-25)
-   • 📅 Book Club (due 2026-02-25)
+   • Do taxes 💵 (due 2026-06-01)
+   • 📅 Cancelled TKD May 30 Wednesday (due 2026-05-30)
+   • 📅 Book Club (due 2026-05-30)
 
 👀 MONITOR: 1 items
 
@@ -135,20 +124,19 @@ DAILY PLAN SUMMARY (Action-Priority Model)
    • Successful payment at Keep2Share
 
 ============================================================
-Next: Run sync_plan_to_amplenote.js to create Action Plan
+Next: Amplenote daily note updated automatically
 ============================================================
 ```
 
 ### 2. DakBoard-Compatible Todoist Tasks
 
-**Automatically created in your Todoist (6 individual tasks):**
+**Automatically created in your Todoist:**
 
 ```
 🎯 TODAY: RE: [External] Max Dourish—Feb 19
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 
@@ -156,14 +144,15 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - ✅ **Individual tasks** - Each DO NOW item is a separate task (DakBoard shows full title)
 - ✅ **Event times included** - "at 08:30 AM" visible on DakBoard
 - ✅ **High priority (red)** - DO NOW tasks are priority 4
-- ✅ **Medium priority (yellow)** - DO SOON summary is priority 2
+- ✅ **Medium priority (orange)** - DO SOON tasks are priority 3
 - ✅ **Kill and fill** - Deletes ALL old daily plan tasks before creating new ones
 - ✅ **No duplicates** - Clean slate every run
 - ✅ **DakBoard optimized** - All details in task title, not description
+- ✅ **Sign-up events filtered** - Registration/signup events are skipped automatically
 
 **How it works:**
-- **Every run:** Deletes ALL old `🎯 TODAY:` and `⏰ SOON:` tasks
-- **Then creates:** 5 individual DO NOW tasks + 1 DO SOON summary
+- **Every run:** Deletes ALL old daily plan tasks
+- **Then creates:** High priority DO NOW tasks + top 3 medium + follow-ups
 - **No accumulation** - Only current day's tasks exist
 - **DakBoard displays:** Full task titles with times and details
 
@@ -210,19 +199,17 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - Next 7 days of events
 - Prioritizes events today/tomorrow as DO NOW
 - Later events go to DO SOON
+- Sign-up/registration events are automatically skipped
+- Recurring routine events skipped unless they need attention (cancelled, doctor, etc.)
 
 **Todoist**
 - All active tasks
 - Respects priorities and due dates
+- Stale tasks (>7 days overdue) flagged separately
 
 **Google Drive** (7 days)
 - Recently modified documents
 - Shows what you're working on
-
-### ❌ Requires Admin Approval
-
-**Microsoft 365 Outlook** - Blocked by organization policy  
-**SharePoint** - Blocked by organization policy
 
 ---
 
@@ -249,6 +236,10 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 **Marketing:**
 - noreply@, no-reply@, donotreply@
 - marketing@, promo@, newsletter@
+
+**Calendar Events Skipped:**
+- Sign-up and registration events (signup, sign up, sign-up, registration)
+- Recurring routine events (taekwondo, cleaners, etc.) without attention keywords
 
 **Personal Exclusions:**
 - Excluded User emails (sender contains 'hartnett' or 'alexandra')
@@ -298,7 +289,7 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 
 ### How It Works
 
-1. **Check for existing token** - `G:\My Drive\03_Areas\Keys\Gmail\token.json`
+1. **Check for existing token** - `G:\My Drive\Areas\Keys\Gmail\token.json`
 2. **If token valid** - Use it
 3. **If token expired** - Auto-refresh using refresh token
 4. **If no token** - Auto-trigger OAuth flow (browser opens, you sign in once)
@@ -308,7 +299,7 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 
 ### OAuth Credentials
 
-**Location:** `G:\My Drive\03_Areas\Keys\Gmail\credentials.json`
+**Location:** `G:\My Drive\Areas\Keys\Gmail\credentials.json`
 
 **Scopes:**
 ```python
@@ -327,7 +318,7 @@ GMAIL_SCOPES = [
 
 ### "Gmail token expired"
 
-**Don't worry.** Just run `python daily_planner.py` again. It will:
+**Don't worry.** Just run `python run_process_new_v2.py` again. It will:
 1. Detect expired token
 2. Auto-trigger OAuth flow
 3. Browser opens
@@ -342,10 +333,6 @@ GMAIL_SCOPES = [
 
 Already enabled. If you see this error, it means the API was just enabled and needs a few minutes to propagate. Wait 5 minutes and try again.
 
-### "Microsoft 365 token not found"
-
-Expected. Microsoft 365 (Outlook/SharePoint) requires admin approval from your IT department. The system works fine without it using Gmail/Calendar/Drive.
-
 ### "No urgent emails found"
 
 This is normal if:
@@ -359,11 +346,13 @@ This is normal if:
 
 ## What Gets Created
 
-### 1. DakBoard Todoist Tasks (6 individual tasks)
+### 1. DakBoard Todoist Tasks
 
 **Tasks in your Todoist inbox:**
-- 5 individual DO NOW tasks with full details in title
-- 1 DO SOON summary task
+- High priority DO NOW tasks with full details in title
+- Top 3 medium priority DO SOON tasks
+- Follow-up reminders for "waiting on" threads
+- Non-routine calendar event tasks
 - All details visible on DakBoard (not hidden in description)
 
 **Kill and fill approach:**
@@ -373,55 +362,31 @@ This is normal if:
 
 ### 2. JSON File
 
-**File:** `daily_plan_YYYYMMDD.json`
+**File:** `comprehensive_analysis_YYYYMMDD_HHMMSS.json`
 
-**Location:** `G:\My Drive\06_Master_Guides\Scripts\`
+**Location:** `_automation/output/`
 
 **Contains:**
 ```json
 {
-  "generated": "2026-02-22T13:09:21.364936",
-  "do_now": [...],
-  "do_soon": [...],
-  "monitor": [...],
-  "documents": {...},
-  "reference_emails": [...],
-  "email_summary": {...},
-  "stats": {...}
+  "generated_at": "2026-05-28T13:09:21.364936",
+  "high_priority": [...],
+  "medium_priority": [...],
+  "low_priority": [...],
+  "follow_ups_needed": [...],
+  "tasks_today": [...],
+  "events_today": [...]
 }
 ```
 
-**Used by:** `sync_plan_to_amplenote.js` to create Amplenote board
+### 3. Amplenote Daily Note (Automatic)
 
----
-
-## Next Steps
-
-### Option 1: Use DakBoard (Recommended)
-
-**Your "process new" workflow now creates:**
-1. ✅ Daily plan JSON file (`daily_plan_YYYYMMDD.json`) with email body previews
-2. ✅ **6 individual Todoist tasks** for DakBoard (top 5 DO NOW + 1 DO SOON summary)
-3. ✅ Amplenote note with full plan and email previews (when you run sync script)
-
-### Option 2: Use Terminal Output
-
-The terminal shows your complete daily plan. You can work from that.
-
-### Option 3: Sync to Amplenote (Optional)
-
-```powershell
-node sync_plan_to_amplenote.js
-```
-
-Creates a formatted daily plan note in Amplenote with:
-- Checkboxes for each task
-- Sections for DO NOW/SOON/MONITOR
-- **Email body previews** - See what action is needed without clicking
-- Links to reference emails
-- Document context
-- Clear "How to Use This Plan" instructions at top
-- Event times included (08:30 AM, 06:30 PM, etc.)
+**Automatically updated** with:
+- DO NOW section with full context per email thread
+- DO SOON section
+- Stale tasks section
+- Follow-up reminders
+- Calendar events for today and tomorrow
 
 ---
 
@@ -429,33 +394,23 @@ Creates a formatted daily plan note in Amplenote with:
 
 ### Change Email Lookback Period
 
-Edit `daily_planner.py` line ~590:
+Edit `gmail_thread_tools.py`:
 ```python
-gmail_items = self.get_gmail_emails(days=30)  # Change 30 to desired days
+all_threads = await thread_tools.get_thread_emails(days=30)  # Change 30 to desired days
 ```
 
 ### Change Calendar Lookahead Period
 
-Edit `daily_planner.py` line ~603:
+Edit `run_process_new_v2.py`:
 ```python
-calendar_items = self.get_calendar_events(days=7)  # Change 7 to desired days
+events = await calendar.get_events(days_ahead=7)  # Change 7 to desired days
 ```
 
-### Add Custom Filters
+### Add Sign-Up Event Keywords to Skip
 
-Edit `daily_planner.py` lines ~44-73:
+Edit `run_process_new_v2.py` — find `skip_event_keywords`:
 ```python
-self.skip_senders = [
-    'tiktok.com',
-    'your-custom-sender@example.com',  # Add here
-    # ... rest of list
-]
-
-self.skip_keywords = [
-    'shipped',
-    'your-custom-keyword',  # Add here
-    # ... rest of list
-]
+skip_event_keywords = ['signup', 'sign up', 'sign-up', 'registration']
 ```
 
 ---
@@ -465,7 +420,7 @@ self.skip_keywords = [
 **Process new = One command for complete daily planning**
 
 ```powershell
-python daily_planner.py
+python run_process_new_v2.py
 ```
 
 - ✅ Fully autonomous (no prompts, no questions)
@@ -474,8 +429,10 @@ python daily_planner.py
 - ✅ Smart filtering (removes spam/newsletters/political)
 - ✅ Reference email detection (account numbers, confirmations)
 - ✅ Action-Priority categorization (DO NOW/SOON/MONITOR)
-- ✅ Clear terminal output showing priorities
-- ✅ JSON file for Amplenote sync (optional)
+- ✅ Claude AI analysis of email threads
+- ✅ Sign-up/registration events filtered
+- ✅ Todoist tasks created automatically
+- ✅ Amplenote daily note updated automatically
 
 **Just run it every morning. That's it.**
 
@@ -485,25 +442,23 @@ python daily_planner.py
 
 **If you're an AI agent trying to run "process new" for the user:**
 
-**IMPORTANT: Use MCP Server (not Scripts folder):**
+**IMPORTANT: Use V2 script:**
 
 1. Navigate to MCP Server: `cd "G:\My Drive\06_Master_Guides\MCP_Server"`
-2. Run: `python run_process_new.py`
+2. Run: `python run_process_new_v2.py`
 3. Wait for completion (30-60 seconds)
 4. Read terminal output - that's the daily plan
+5. Todoist tasks created automatically
+6. Amplenote daily note updated automatically
 
-**The MCP server automatically:**
+**The V2 script automatically:**
 - Creates Todoist tasks (DakBoard compatible)
 - Creates Amplenote note with full content
 - Scans Google Drive documents
-- Scans file system (Inbox, Downloads)
-- Filters promotional emails
+- Filters promotional emails and sign-up events
+- Analyzes email threads using Claude AI (anthropic/claude-sonnet-4-6)
 
 **Don't ask the user for anything. Everything is automatic.**
-
-**Alternative (backward compatible):**
-- You can also run `python daily_planner.py` from Scripts folder
-- It's a wrapper that calls the MCP server
 
 **If you see authentication errors:**
 - Just run the command again
@@ -511,10 +466,4 @@ python daily_planner.py
 - User signs in once
 - System continues
 
-**If you see "Microsoft 365 token not found":**
-- This is expected and normal
-- System works fine without it
-- Don't try to fix it (requires admin approval)
-
 **The system is designed to be fully autonomous. Trust it.**
-
