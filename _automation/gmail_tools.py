@@ -79,6 +79,7 @@ class GmailTools:
             'auto-confirm@', 'order-update@', 'delivery@',
             'fedex.com', 'ups.com', 'usps.com', 'dhl.com',
             'tracking@', 'shipping@', 'shippo.com',
+            'onedrive', 'sharepoint',
             # Promotional/marketing emails
             'newsletters@audible.com', 'audible.com',
             'email.bestbuy.com', 'bestbuy.com',
@@ -138,7 +139,10 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive/SharePoint and sign-ups
+            'onedrive updated', 'onedrive sync', 'sharepoint shared',
+            'sign up', 'signup', 'sign-up', 'registration', 'enroll'
         ]
         
         self.reference_emails = []
