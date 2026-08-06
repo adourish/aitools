@@ -97,7 +97,7 @@ PRIORITY: [High/Medium/Low - reason]
 CONTEXT: [1 specific sentence with key details]
 
 Priority levels:
-- High = explicit deadline within 7 days OR someone blocked on me OR money/registration at risk
+- High = explicit deadline within 7 days OR someone blocked on me OR money at risk
 - Medium = action needed but deadline is 7-30 days out
 - Low = informational, already handled, deadline passed, or no action needed"""
         

@@ -112,7 +112,7 @@ class GmailTools:
             'appointment reminder', 'appointment confirmed',
             'scheduled for', 'appointment on',
             'field trip', 'permission slip',
-            'registration due', 'renewal due', 'expires',
+            'renewal due', 'expires',
             'property maintenance', 'on site', 'service scheduled',
             'today at', 'this afternoon', 'this evening',
             'same day', 'deadline today',
