@@ -467,7 +467,6 @@ New files can enter the system through various locations. Understanding these lo
 | Screenshots | `C:\Users\sol90\Pictures\Screenshots\` | `G:\My Drive\01_Operate\Inbox\` | Daily |
 | USB/External | Copy to Downloads | Copy to Inbox | As needed |
 | Cloud sync | Service folder | Move to Downloads/Inbox | As needed |
-| OneDrive sync | `C:\Users\sol90\OneDrive` | Move to Downloads/Inbox | As needed |
 | Bulk media | `G:\My Drive\01_Operate\Media_Staging\` | Inbox | Weekly |
 | Bulk documents | `G:\My Drive\01_Operate\Documents_Staging\` | Inbox | Weekly |
 
@@ -547,7 +546,7 @@ Downloads/Archives/
 4. **Screenshots folder** (third priority - accumulates quickly)
 5. **Staging folders** (fourth priority - bulk processing)
 6. **G Drive root** (weekly check for orphaned files)
-7. **External/cloud sync** (as needed when connected - OneDrive, etc.)
+7. **External/cloud sync** (as needed when connected)
 
 ---
 
@@ -605,7 +604,6 @@ Downloads/Archives/
 7. **Check custom torrent folder** - If configured differently
 8. **Check Media_Staging** - `G:\My Drive\01_Operate\Media_Staging\` (if exists)
 9. **Check Documents_Staging** - `G:\My Drive\01_Operate\Documents_Staging\` (if exists)
-10. **Check OneDrive** - `C:\Users\sol90\OneDrive` (if syncing files)
 
 #### Processing Priority Order
 1. **Downloads folder root** (highest priority - fills up quickly, limited space)
@@ -614,7 +612,7 @@ Downloads/Archives/
 4. **Screenshots folder** (third priority - accumulates quickly)
 5. **Staging folders** (fourth priority - bulk processing)
 6. **G Drive root** (weekly check for orphaned files)
-7. **External/cloud sync** (as needed when connected - OneDrive, etc.)
+7. **External/cloud sync** (as needed when connected)
 
 ### Weekly Review Workflow
 
