@@ -110,7 +110,7 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
@@ -189,7 +189,6 @@ Priority levels:
             elif line.startswith('DEADLINE:'):
                 current_section = 'deadline'
                 deadline_text = line.replace('DEADLINE:', '').strip()
-                # Extract YYYY-MM-DD date if present
                 date_match = re.search(r'(\d{4}-\d{2}-\d{2})', deadline_text)
                 if date_match:
                     analysis['deadline'] = date_match.group(1)
@@ -253,13 +252,10 @@ Priority levels:
 
     def _actions_overlap(self, a: str, b: str) -> bool:
         """Check if two normalized action strings are semantically similar"""
-        # Substring check
         if a in b or b in a:
             return True
-        # Word overlap check
         words_a = set(a.split())
         words_b = set(b.split())
-        # Remove stop words
         stop_words = {'the', 'a', 'an', 'to', 'for', 'and', 'or', 'is', 'in', 'on', 'at', 'of', 'your', 'this', 'that', 'it', 'from', 'with', 'by'}
         words_a -= stop_words
         words_b -= stop_words
@@ -273,16 +269,9 @@ Priority levels:
         """
         Remove duplicate action items across different thread analyses.
         When duplicates are found, keep the one from the higher-priority analysis.
-
-        Args:
-            analyses: List of analysis dicts with 'action_items' and 'priority'
-
-        Returns:
-            Cleaned list of analyses with duplicate actions removed
         """
         priority_order = {'high': 0, 'medium': 1, 'low': 2}
 
-        # Build a global list of (normalized_action, priority, analysis_idx, action_idx)
         all_actions = []
         for ai, analysis in enumerate(analyses):
             for ji, action in enumerate(analysis.get('action_items', [])):
@@ -290,16 +279,14 @@ Priority levels:
                 pri = priority_order.get(analysis.get('priority', 'low'), 2)
                 all_actions.append((norm, pri, ai, ji))
 
-        # Find duplicates: for each pair across different analyses
-        to_remove = set()  # (analysis_idx, action_idx) to remove
+        to_remove = set()
         for i in range(len(all_actions)):
             for j in range(i + 1, len(all_actions)):
                 norm_i, pri_i, ai_i, ji_i = all_actions[i]
                 norm_j, pri_j, ai_j, ji_j = all_actions[j]
                 if ai_i == ai_j:
-                    continue  # Same analysis — skip
+                    continue
                 if self._actions_overlap(norm_i, norm_j):
-                    # Remove the lower-priority one (higher number = lower priority)
                     if pri_i >= pri_j:
                         to_remove.add((ai_i, ji_i))
                     else:
@@ -308,7 +295,6 @@ Priority levels:
         if to_remove:
             logger.info(f"Dedup: removing {len(to_remove)} duplicate action items across analyses")
 
-        # Rebuild analyses with duplicates removed
         result = []
         for ai, analysis in enumerate(analyses):
             cleaned_actions = [
@@ -335,29 +321,23 @@ Priority levels:
         """
         actions = []
         
-        # Collect all actions with priority
         all_items = []
         
-        # High priority first
         for analysis in email_analyses:
             if analysis.get('action_items') and analysis['priority'] == 'high':
-                for action in analysis['action_items'][:1]:  # First action only
+                for action in analysis['action_items'][:1]:
                     all_items.append((action, 'high'))
         
-        # Medium priority next
         for analysis in email_analyses:
             if analysis.get('action_items') and analysis['priority'] == 'medium':
                 for action in analysis['action_items'][:1]:
                     all_items.append((action, 'medium'))
         
-        # Take top 3 actions
         for action, priority in all_items[:3]:
-            # Shorten if too long
             if len(action) > 70:
                 action = action[:67] + "..."
             actions.append(f"• {action}")
         
-        # If no actions, show count
         if not actions:
             if email_analyses:
                 return f"{len(email_analyses)} threads to review"

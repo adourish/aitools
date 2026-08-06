@@ -47,7 +47,6 @@ class AmplenoteTools:
             note_data = {'name': title, 'text': content}
             
             if tags:
-                # Amplenote expects tags as array of objects with 'text' field
                 note_data['tags'] = [{'text': tag} for tag in tags]
             
             logger.info(f"Sending to Amplenote - Title: {title}, Body length: {len(content)}")
@@ -65,12 +64,10 @@ class AmplenoteTools:
             if response.status_code == 401:
                 logger.warning("Amplenote token expired, attempting automatic refresh...")
                 
-                # Try to refresh the token automatically
                 try:
                     new_token = await self.auth_manager.refresh_amplenote_token()
                     logger.info("Token refreshed successfully, retrying request...")
                     
-                    # Retry the request with new token
                     headers['Authorization'] = f'Bearer {new_token}'
                     response = requests.post(
                         f"{self.base_url}/notes",
@@ -82,7 +79,6 @@ class AmplenoteTools:
                         logger.error(f"Amplenote API error after refresh: {response.status_code} - {response.text}")
                         raise Exception(f"Amplenote API error: {response.status_code}")
                     
-                    # Success after refresh
                     note = response.json()
                     logger.info(f"Created Amplenote note after token refresh: {title}")
                     return note
@@ -109,7 +105,6 @@ class AmplenoteTools:
         
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 401:
-                # Already handled above, just re-raise
                 raise
             logger.error(f"Error creating Amplenote note: {e}")
             raise
@@ -149,7 +144,6 @@ class AmplenoteTools:
             response.raise_for_status()
             
             response_data = response.json()
-            # API returns dict with 'notes' key containing array of note objects
             if isinstance(response_data, dict) and 'notes' in response_data:
                 notes = response_data['notes']
             elif isinstance(response_data, list):
@@ -177,7 +171,6 @@ class AmplenoteTools:
             response.raise_for_status()
             notes_data = response.json()
             
-            # Handle different response formats
             if isinstance(notes_data, dict) and 'notes' in notes_data:
                 notes = notes_data['notes']
             elif isinstance(notes_data, list):
@@ -186,7 +179,6 @@ class AmplenoteTools:
                 logger.warning(f"Unexpected notes response format: {type(notes_data)}")
                 return None
             
-            # Look for daily note with date in title
             for note in notes:
                 if isinstance(note, str):
                     continue
@@ -221,7 +213,6 @@ class AmplenoteTools:
         headers = await self._get_headers()
         
         try:
-            # Use PUT to completely replace note text
             response = requests.put(
                 f"{self.base_url}/notes/{note_uuid}",
                 headers=headers,
@@ -358,13 +349,11 @@ class AmplenoteTools:
     async def _generate_daily_summary(self, plan: Dict[str, Any]) -> str:
         """Use AI to generate executive summary of the day"""
         try:
-            # Collect all content for analysis
             emails = [item for item in plan['do_now'] if item.get('source') == 'Email']
             tasks = [item for item in plan['do_now'] if item.get('source') == 'Todoist']
             events = [item for item in plan['do_now'] if item.get('source') == 'Calendar']
-            upcoming = plan['do_soon'][:5]  # Next 5 items
+            upcoming = plan['do_soon'][:5]
             
-            # Build comprehensive context
             context = "Today's Overview:\n\n"
             
             if emails:
@@ -397,7 +386,6 @@ class AmplenoteTools:
                     due = f" (Due: {item.get('due', '')})" if item.get('due') else ""
                     context += f"- {item.get('title', '')}{due}\n"
             
-            # Generate AI summary
             if not await self._ensure_openrouter_key():
                 return "• No AI summary available (OpenRouter key not configured)"
             
@@ -422,7 +410,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -444,9 +432,8 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
     async def update_daily_note_with_plan(self, plan: Dict[str, Any]) -> bool:
         """Create/update single daily plan note using INSERT_NODES for proper rendering"""
         try:
-            static_title = "📋 Daily Plan"
+            static_title = "\U0001f4cb Daily Plan"
 
-            # Find existing note to replace
             all_notes = await self.get_notes(tag='daily-plan')
             logger.info(f"Found {len(all_notes)} notes with 'daily-plan' tag")
 
@@ -462,12 +449,10 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     logger.warning(f"Error checking note: {e}")
                     continue
 
-            # Delete old note if it exists
             if existing_note_uuid:
                 logger.info(f"Deleting existing daily plan note: {existing_note_uuid}")
                 await self.delete_note(existing_note_uuid)
 
-            # Create empty note first
             logger.info(f"Creating new daily plan note")
             note = await self.create_note(
                 title=static_title,
@@ -476,7 +461,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
             )
             note_uuid = note['uuid']
 
-            # Build structured nodes and insert them
             nodes = self._build_daily_plan_nodes(plan)
             await self._insert_nodes_batched(note_uuid, nodes)
 
@@ -509,7 +493,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 logger.warning(f"INSERT_NODES batch {i // batch_size + 1} failed: {e}")
 
     def _make_heading(self, text: str, level: int = 2) -> dict:
-        """Create a heading node"""
         return {
             'type': 'heading',
             'attrs': {'level': level},
@@ -517,21 +500,18 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         }
 
     def _make_paragraph(self, text: str) -> dict:
-        """Create a paragraph node"""
         return {
             'type': 'paragraph',
             'content': [{'type': 'text', 'text': text}]
         }
 
     def _make_bullet(self, text: str) -> dict:
-        """Create a bullet list item node"""
         return {
             'type': 'bullet_list_item',
             'content': [{'type': 'paragraph', 'content': [{'type': 'text', 'text': text}]}]
         }
 
     def _make_task(self, text: str, important: bool = False) -> dict:
-        """Create a check list item (task) node"""
         attrs = {}
         if important:
             attrs['flags'] = 'I'
@@ -546,16 +526,13 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         nodes = []
         now = datetime.now()
 
-        # ── Header ──
-        nodes.append(self._make_paragraph(f"📅 {now.strftime('%A, %B %d, %Y')}"))
+        nodes.append(self._make_paragraph(f"\U0001f4c5 {now.strftime('%A, %B %d, %Y')}"))
 
-        # ── Today's Schedule ──
         today_events = plan.get('today_events', [])
         if today_events:
             nodes.append(self._make_heading("Today", 2))
             nodes.extend(self._events_to_nodes(today_events))
 
-        # ── Tomorrow's Schedule ──
         tomorrow_events = plan.get('tomorrow_events', [])
         if tomorrow_events:
             try:
@@ -566,7 +543,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
             nodes.append(self._make_heading(f"Tomorrow — {tmrw_date}", 2))
             nodes.extend(self._events_to_nodes(tomorrow_events))
 
-        # ── Action Items ──
         if plan['do_now']:
             nodes.append(self._make_heading("Action Items", 2))
             for item in plan['do_now'][:5]:
@@ -583,7 +559,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 else:
                     nodes.append(self._make_task(item['title']))
 
-        # ── Do Soon ──
         if plan['do_soon']:
             nodes.append(self._make_heading("Do Soon", 2))
             for item in plan['do_soon'][:5]:
@@ -591,21 +566,18 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 due_str = self._format_due_date(item.get('due'))
                 nodes.append(self._make_task(f"{title}{due_str}"))
 
-        # ── Stale Tasks ──
         if plan.get('stale'):
             nodes.append(self._make_heading("Stale — Review or Close", 2))
             for task in plan['stale']:
                 days = task.get('days_overdue', '?')
                 due = task.get('due', '')
                 title = task['title']
-                # Extract just the action part before " - " description
                 if ' - ' in title:
                     title = title.split(' - ')[0]
                 if len(title) > 80:
                     title = title[:77] + "..."
                 nodes.append(self._make_bullet(f"{title} — due {due} ({days}d overdue)"))
 
-        # ── Rest of Week ──
         week_events = plan.get('week_events', [])
         if week_events:
             nodes.append(self._make_heading("Rest of Week", 2))
@@ -623,7 +595,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 else:
                     nodes.append(self._make_bullet(f"{day_label} — {summary}"))
 
-        # ── Follow-ups ──
         if plan.get('follow_ups'):
             nodes.append(self._make_heading("Follow-ups", 2))
             for item in plan['follow_ups']:
@@ -631,7 +602,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                 if text:
                     nodes.append(self._make_bullet(text))
 
-        # ── Footer ──
         stats = plan.get('stats', {})
         action_count = len(plan.get('do_now', []))
         stale_count = len(plan.get('stale', []))
@@ -671,8 +641,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         lines.append("## Process New Results")
         lines.append(f"*Generated: {datetime.now().strftime('%Y-%m-%d %I:%M %p')}*\n")
         
-        # DO NOW section
-        lines.append("### 🎯 DO NOW")
+        lines.append("### \U0001f3af DO NOW")
         if plan['do_now']:
             for item in plan['do_now']:
                 if item['source'] == 'Email':
@@ -686,7 +655,6 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         else:
             lines.append("- *No urgent items*")
         
-        # DO SOON section
         lines.append("\n### ⏰ DO SOON")
         if plan['do_soon']:
             for item in plan['do_soon']:
@@ -696,8 +664,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
         else:
             lines.append("- *No upcoming items*")
         
-        # MONITOR section
-        lines.append("\n### 📋 MONITOR")
+        lines.append("\n### \U0001f4cb MONITOR")
         if plan['monitor']:
             for item in plan['monitor']:
                 lines.append(f"- [ ] {item['title']}")
