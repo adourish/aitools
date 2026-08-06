@@ -99,10 +99,24 @@ class GmailThreadTools:
         Returns:
             Dict of priority threads
         """
+        # Subjects/senders to skip entirely before scoring
+        SKIP_SUBJECT_PATTERNS = [
+            'onedrive', 'one drive',
+            'sign up', 'signup', 'sign-up',
+            'unsubscribe', 'newsletter',
+        ]
+
         scored_threads = []
         now = datetime.now()
 
         for subject, emails in threads.items():
+            # Skip noise threads before scoring
+            subject_lower = subject.lower()
+            body_lower = (emails[-1].get('body', '') or '')[:300].lower()
+            if any(p in subject_lower or p in body_lower for p in SKIP_SUBJECT_PATTERNS):
+                logger.info(f"Skipped noise thread: {subject[:60]}")
+                continue
+
             score = 0
             latest_email = emails[-1]
             sender = latest_email.get('from', '')

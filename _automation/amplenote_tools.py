@@ -422,19 +422,19 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 if 'choices' in result and len(result['choices']) > 0:
                     summary = result['choices'][0]['message']['content'].strip()
                     return summary
-            
+
             return "Focus on urgent emails and scheduled events today."
             
         except Exception as e:
