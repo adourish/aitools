@@ -110,9 +110,9 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-6",
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 700 if is_cluster else 500
+                    "max_tokens": 1500 if is_cluster else 1000
                 },
                 timeout=30
             )
