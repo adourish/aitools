@@ -1,36 +1,22 @@
 #!/usr/bin/env python3
 """
-OAuth Setup Script for Holistic Daily Planning
-Sets up user authentication for Google Drive and Microsoft Graph (Outlook + SharePoint)
+OAuth Setup Script for Daily Planning
+Sets up user authentication for Google Drive (Gmail + Drive)
 """
 
 import os
-import json
-import webbrowser
-from datetime import datetime
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from msal import PublicClientApplication
 
 # Paths
-ENVIRONMENTS_PATH = r'G:\My Drive\03_Areas\Keys\Environments\environments.json'
 GMAIL_CREDS_PATH = r'G:\My Drive\03_Areas\Keys\Gmail\credentials.json'
 GMAIL_TOKEN_PATH = r'G:\My Drive\03_Areas\Keys\Gmail\token.json'
-MS_TOKEN_PATH = r'G:\My Drive\03_Areas\Keys\Microsoft365\token.json'
 
 # Scopes
 GOOGLE_SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/drive.readonly'
-]
-
-MICROSOFT_SCOPES = [
-    'https://graph.microsoft.com/Mail.Read',
-    'https://graph.microsoft.com/Calendars.Read',
-    'https://graph.microsoft.com/Files.Read.All',
-    'https://graph.microsoft.com/Sites.Read.All',
-    'https://graph.microsoft.com/User.Read'
 ]
 
 def setup_google_oauth():
@@ -75,29 +61,13 @@ def setup_google_oauth():
         return False
 
 def setup_microsoft_oauth():
-    """Set up Microsoft OAuth with delegated permissions"""
+    """Microsoft OAuth setup has been disabled"""
     print("\n" + "="*60)
-    print("MICROSOFT 365 OAUTH SETUP (Outlook + SharePoint)")
+    print("MICROSOFT 365 OAUTH SETUP - DISABLED")
     print("="*60)
-    
-    # Load config
-    with open(ENVIRONMENTS_PATH, 'r') as f:
-        config = json.load(f)
-    
-    ms_config = config['environments']['microsoft365']['oauth']
-    client_id = ms_config['clientId']
-    tenant_id = ms_config['tenantId']
-    
-    try:
-        # Create public client application for delegated permissions
-        app = PublicClientApplication(
-            client_id,
-            authority=f"https://login.microsoftonline.com/{tenant_id}"
-        )
-        
-        print("🔐 Starting OAuth flow...")
-        print("   Browser will open for authentication")
-        print("   Sign in with your work account")
+    print("Microsoft 365 (Outlook + SharePoint) integration has been removed.")
+    print("The system now uses Gmail and Google Drive exclusively.")
+    return False
         print("   Grant access to Mail, Calendar, Files, and Sites\n")
         
         # Interactive authentication
@@ -140,11 +110,9 @@ def main():
     print("="*60)
     print("\nThis script will set up OAuth authentication for:")
     print("  1. Google (Gmail + Drive)")
-    print("  2. Microsoft 365 (Outlook + SharePoint)")
     print("\nYou'll need to:")
     print("  - Sign in to your Google account")
-    print("  - Sign in to your Microsoft 365 work account")
-    print("  - Grant permissions for each service")
+    print("  - Grant permissions for Gmail and Drive")
     print("\n" + "="*60)
     
     input("\nPress Enter to continue...")
@@ -160,15 +128,14 @@ def main():
     print("OAUTH SETUP SUMMARY")
     print("="*60)
     print(f"Google (Gmail + Drive):     {'✅ Success' if google_success else '❌ Failed'}")
-    print(f"Microsoft 365 (Outlook + SharePoint): {'✅ Success' if ms_success else '❌ Failed'}")
     print("="*60)
-    
-    if google_success and ms_success:
-        print("\n✅ All OAuth setups complete!")
-        print("   You can now run 'process new' with full holistic planning")
-        print("\n   Run: python daily_planner.py")
+
+    if google_success:
+        print("\n✅ OAuth setup complete!")
+        print("   You can now run 'process new'")
+        print("\n   Run: python run_process_new_v2.py")
     else:
-        print("\n⚠️  Some OAuth setups failed")
+        print("\n❌ OAuth setup failed")
         print("   Check error messages above and try again")
 
 if __name__ == '__main__':
