@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Microsoft 365 OAuth Setup
-Sets up delegated permissions for Outlook email and SharePoint documents
+Microsoft 365 OAuth Setup — DEPRECATED
+OneDrive and SharePoint support has been removed from process_new workflow.
+This script is retained for backward compatibility only.
 """
 
 import os
@@ -25,15 +26,22 @@ SCOPES = [
 def setup_microsoft_oauth():
     """Set up Microsoft OAuth with delegated permissions"""
     print("\n" + "="*60)
-    print("MICROSOFT 365 OAUTH SETUP")
+    print("MICROSOFT 365 OAUTH SETUP — DEPRECATED")
     print("="*60)
-    print("\nThis will set up access to:")
-    print("  - Outlook Email (work)")
-    print("  - SharePoint/OneDrive Documents")
-    print("  - Calendar")
+    print("\n⚠️  OneDrive and SharePoint support has been removed.")
+    print("    This script is for backward compatibility only.")
+    print("\nProcess New now focuses on:")
+    print("  - Gmail (primary email)")
+    print("  - Google Calendar")
+    print("  - Google Drive")
+    print("  - Todoist tasks")
+    print("  - Amplenote notes")
     print("\n" + "="*60)
-    
-    # Load config
+    print("\n❌ This setup is no longer needed for process_new.")
+    print("   Exiting.")
+    return False
+
+    # Load config (deprecated)
     with open(ENVIRONMENTS_PATH, 'r') as f:
         config = json.load(f)
     

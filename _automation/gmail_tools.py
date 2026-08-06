@@ -79,6 +79,8 @@ class GmailTools:
             'auto-confirm@', 'order-update@', 'delivery@',
             'fedex.com', 'ups.com', 'usps.com', 'dhl.com',
             'tracking@', 'shipping@', 'shippo.com',
+            # Microsoft cloud services
+            'onedrive', 'sharepoint', 'microsoft.com',
             # Promotional/marketing emails
             'newsletters@audible.com', 'audible.com',
             'email.bestbuy.com', 'bestbuy.com',
@@ -124,6 +126,9 @@ class GmailTools:
             'package', 'shipment', 'order confirmation',
             'your order', 'has shipped', 'out for delivery',
             'hanger', 'hangers', 'item has been delivered',
+            # Sign-up and registration notifications
+            'sign up', 'signup', 'registration confirmation', 'welcome to',
+            'confirm your account', 'verify your email', 'activate your account',
             # Promotional/sales keywords
             'deal ends', 'wish list', 'sale', 'discount',
             'trade up', 'own apple for less',
