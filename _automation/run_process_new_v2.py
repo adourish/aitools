@@ -496,6 +496,11 @@ async def process_new_comprehensive():
         # unless they contain attention keywords (cancelled, doctor, etc.)
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
+        skip_event_keywords = [
+            'signup', 'sign up', 'sign-up', 'registration',
+            'onedrive', 'sync',
+        ]
+
         attention_keywords = [
             'cancelled', 'canceled', 'rescheduled', 'moved',
             'dr', 'doctor', 'dentist', 'appointment',
@@ -513,6 +518,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            should_skip = any(kw in summary_lower for kw in skip_event_keywords)
+            if should_skip:
+                logger.info(f"   Skipped (filtered): {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
