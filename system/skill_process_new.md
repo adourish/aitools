@@ -116,7 +116,7 @@ python daily_planner.py
 ============================================================
 DAILY PLAN SUMMARY (Action-Priority Model)
 ============================================================
-🎯 DO NOW (7 items):
+🎯 DO NOW (6 items):
    • RE: [External] Max Dourish—Feb 19 (due 2026-02-22)
    • Max Dourish—Feb 19 (due 2026-02-22)
    • godzilla task 2 (due 2025-11-13)
@@ -141,14 +141,13 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 
 ### 2. DakBoard-Compatible Todoist Tasks
 
-**Automatically created in your Todoist (6 individual tasks):**
+**Automatically created in your Todoist (5 individual tasks):**
 
 ```
 🎯 TODAY: RE: [External] Max Dourish—Feb 19
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 
@@ -255,6 +254,11 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - Excluded User calendar events (organizer email: excluded-user@example.com)
 - **Automatic filtering** - Any event organized by excluded-user@example.com is excluded
 - Works for ALL future events from Alex's calendar
+
+**Administrative Events:**
+- Signup events (sign-up, signup, sign up)
+- OneDrive sync and storage events
+- Low-value calendar maintenance tasks
 
 ### Always Included
 
