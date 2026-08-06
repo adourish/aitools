@@ -6,6 +6,7 @@ Personal services: Gmail, Todoist, Amplenote.
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from google.auth.transport.requests import Request
@@ -16,7 +17,12 @@ from credential_resolver import CredentialResolver
 
 logger = logging.getLogger(__name__)
 
-GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
+# Support environment variable for token path, with fallback
+_token_path = os.environ.get('GMAIL_TOKEN_PATH')
+if _token_path:
+    GMAIL_TOKEN_PATH = Path(_token_path)
+else:
+    GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
 
 
 class AuthManager:
