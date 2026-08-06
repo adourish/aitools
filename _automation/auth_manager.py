@@ -4,9 +4,7 @@ Authentication Manager — wraps CredentialResolver for OAuth token management.
 Personal services: Gmail, Todoist, Amplenote.
 """
 
-import json
 import logging
-from pathlib import Path
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -15,8 +13,6 @@ import requests
 from credential_resolver import CredentialResolver
 
 logger = logging.getLogger(__name__)
-
-GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
 
 
 class AuthManager:
@@ -30,26 +26,22 @@ class AuthManager:
         logger.info("AuthManager initialized (providers: %s)", self._resolver.providers())
 
     async def get_gmail_credentials(self) -> Credentials:
-        """Get Gmail credentials from token.json, refreshing if expired."""
+        """Get Gmail credentials from credential resolver, refreshing if expired."""
         if self._gmail_creds and not self._gmail_creds.expired:
             return self._gmail_creds
 
-        if GMAIL_TOKEN_PATH.exists():
-            token_data = json.loads(GMAIL_TOKEN_PATH.read_text())
-            self._gmail_creds = Credentials(
-                token=token_data['token'],
-                refresh_token=token_data['refresh_token'],
-                token_uri=token_data['token_uri'],
-                client_id=token_data['client_id'],
-                client_secret=token_data['client_secret'],
-                scopes=token_data['scopes']
-            )
-            if self._gmail_creds.expired and self._gmail_creds.refresh_token:
-                logger.info("Refreshing Gmail token")
-                self._gmail_creds.refresh(Request())
-                token_data['token'] = self._gmail_creds.token
-                GMAIL_TOKEN_PATH.write_text(json.dumps(token_data, indent=2))
-                logger.info("Gmail token refreshed and saved")
+        creds_data = self._resolver.get("api-personal-gmail")
+        self._gmail_creds = Credentials(
+            token=creds_data.get('token'),
+            refresh_token=creds_data.get('refresh_token'),
+            token_uri=creds_data.get('token_uri', 'https://oauth2.googleapis.com/token'),
+            client_id=creds_data.get('client_id'),
+            client_secret=creds_data.get('client_secret'),
+            scopes=creds_data.get('scopes')
+        )
+        if self._gmail_creds.expired and self._gmail_creds.refresh_token:
+            logger.info("Refreshing Gmail token")
+            self._gmail_creds.refresh(Request())
 
         return self._gmail_creds
 

@@ -94,8 +94,7 @@ class AmplenoteTools:
                     print("=" * 70)
                     print("\nAutomatic token refresh failed.")
                     print("\nTo manually refresh the token, run:")
-                    print('  cd "G:\\My Drive\\06_Master_Guides\\Scripts"')
-                    print("  node refresh_amplenote_token.js")
+                    print("  python refresh_amplenote_token.py")
                     print("\nThen run process new again.")
                     print("=" * 70 + "\n")
                     raise Exception("Amplenote token refresh failed - manual intervention required")
@@ -422,7 +421,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-4-5-20251001",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
