@@ -2,8 +2,8 @@
 
 **One-Command Daily Planning: Autonomous Gmail + Calendar + Todoist + Drive Integration**
 
-**Version:** 2.0.0 - Fully Autonomous  
-**Last Updated:** February 22, 2026  
+**Version:** 2.1.0 - Fully Autonomous  
+**Last Updated:** May 4, 2026  
 **Guide Number:** 09
 
 ---
@@ -39,7 +39,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Emails:**
 - ✅ Gmail (last 1 month) - Urgent emails and reference info
-- ❌ Microsoft 365 Outlook (blocked by admin)
 
 **Tasks & Calendar:**
 - ✅ Todoist (all active tasks)
@@ -51,7 +50,6 @@ Scans **all new content** - Emails, Tasks & Calendar, Files & Downloads, and Doc
 
 **Documents:**
 - ✅ Google Drive (last 7 days)
-- ❌ SharePoint (blocked by admin)
 
 ---
 
@@ -91,7 +89,6 @@ python daily_planner.py
 ```
 ✅ Gmail & Calendar authenticated
 ✅ Google Drive authenticated
-❌ Microsoft 365 token not found
 
 ╔════════════════════════════════════════════════════════════╗
 ║              Daily Planner - Generating Plan               ║
@@ -100,8 +97,6 @@ python daily_planner.py
 📧 Checking Gmail (last 1 month)...
    Found 3 urgent items from Gmail
    Found 3 reference emails with important info
-📧 Checking Outlook (last 1 month)...
-   Found 0 urgent items from Outlook
 📋 Fetching Todoist tasks...
    Found 2 active tasks
 📅 Checking Google Calendar (next 7 days)...
@@ -148,7 +143,6 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 🎯 TODAY: godzilla task 2
 🎯 TODAY: 📅 Cleaners at 08:30 AM
 🎯 TODAY: 📅 Taekwondo at 06:30 PM
-🎯 TODAY: 📅 Tae Kwon Do signup at 09:00 AM
 ⏰ SOON: 3 items this week
 ```
 
@@ -160,10 +154,11 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - ✅ **Kill and fill** - Deletes ALL old daily plan tasks before creating new ones
 - ✅ **No duplicates** - Clean slate every run
 - ✅ **DakBoard optimized** - All details in task title, not description
+- ✅ **Sign-up events skipped** - Registration and sign-up calendar events are not converted to tasks
 
 **How it works:**
 - **Every run:** Deletes ALL old `🎯 TODAY:` and `⏰ SOON:` tasks
-- **Then creates:** 5 individual DO NOW tasks + 1 DO SOON summary
+- **Then creates:** DO NOW tasks + DO SOON summary
 - **No accumulation** - Only current day's tasks exist
 - **DakBoard displays:** Full task titles with times and details
 
@@ -210,6 +205,7 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - Next 7 days of events
 - Prioritizes events today/tomorrow as DO NOW
 - Later events go to DO SOON
+- Sign-up and registration events are automatically skipped
 
 **Todoist**
 - All active tasks
@@ -218,11 +214,6 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 **Google Drive** (7 days)
 - Recently modified documents
 - Shows what you're working on
-
-### ❌ Requires Admin Approval
-
-**Microsoft 365 Outlook** - Blocked by organization policy  
-**SharePoint** - Blocked by organization policy
 
 ---
 
@@ -255,6 +246,10 @@ Next: Run sync_plan_to_amplenote.js to create Action Plan
 - Excluded User calendar events (organizer email: excluded-user@example.com)
 - **Automatic filtering** - Any event organized by excluded-user@example.com is excluded
 - Works for ALL future events from Alex's calendar
+
+**Calendar Event Exclusions:**
+- Sign-up and registration events (signup, sign up, sign-up, registration)
+- Recurring routine events without special attention keywords
 
 ### Always Included
 
@@ -342,10 +337,6 @@ GMAIL_SCOPES = [
 
 Already enabled. If you see this error, it means the API was just enabled and needs a few minutes to propagate. Wait 5 minutes and try again.
 
-### "Microsoft 365 token not found"
-
-Expected. Microsoft 365 (Outlook/SharePoint) requires admin approval from your IT department. The system works fine without it using Gmail/Calendar/Drive.
-
 ### "No urgent emails found"
 
 This is normal if:
@@ -359,11 +350,11 @@ This is normal if:
 
 ## What Gets Created
 
-### 1. DakBoard Todoist Tasks (6 individual tasks)
+### 1. DakBoard Todoist Tasks
 
 **Tasks in your Todoist inbox:**
-- 5 individual DO NOW tasks with full details in title
-- 1 DO SOON summary task
+- Individual DO NOW tasks with full details in title
+- DO SOON summary task
 - All details visible on DakBoard (not hidden in description)
 
 **Kill and fill approach:**
@@ -380,7 +371,7 @@ This is normal if:
 **Contains:**
 ```json
 {
-  "generated": "2026-02-22T13:09:21.364936",
+  "generated": "2026-05-04T13:09:21.364936",
   "do_now": [...],
   "do_soon": [...],
   "monitor": [...],
@@ -401,7 +392,7 @@ This is normal if:
 
 **Your "process new" workflow now creates:**
 1. ✅ Daily plan JSON file (`daily_plan_YYYYMMDD.json`) with email body previews
-2. ✅ **6 individual Todoist tasks** for DakBoard (top 5 DO NOW + 1 DO SOON summary)
+2. ✅ **Individual Todoist tasks** for DakBoard (top 5 DO NOW + DO SOON summary)
 3. ✅ Amplenote note with full plan and email previews (when you run sync script)
 
 ### Option 2: Use Terminal Output
@@ -471,7 +462,7 @@ python daily_planner.py
 - ✅ Fully autonomous (no prompts, no questions)
 - ✅ Auto-authenticates all services
 - ✅ Scans Gmail, Calendar, Todoist, Drive
-- ✅ Smart filtering (removes spam/newsletters/political)
+- ✅ Smart filtering (removes spam/newsletters/political/sign-ups)
 - ✅ Reference email detection (account numbers, confirmations)
 - ✅ Action-Priority categorization (DO NOW/SOON/MONITOR)
 - ✅ Clear terminal output showing priorities
@@ -497,7 +488,8 @@ python daily_planner.py
 - Creates Amplenote note with full content
 - Scans Google Drive documents
 - Scans file system (Inbox, Downloads)
-- Filters promotional emails
+- Filters promotional emails and sign-up events
+- Uses Claude Sonnet for intelligent email analysis
 
 **Don't ask the user for anything. Everything is automatic.**
 
@@ -511,10 +503,4 @@ python daily_planner.py
 - User signs in once
 - System continues
 
-**If you see "Microsoft 365 token not found":**
-- This is expected and normal
-- System works fine without it
-- Don't try to fix it (requires admin approval)
-
 **The system is designed to be fully autonomous. Trust it.**
-
