@@ -6,6 +6,7 @@ Personal services: Gmail, Todoist, Amplenote.
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from google.auth.transport.requests import Request
@@ -23,11 +24,20 @@ class AuthManager:
     """Manages OAuth tokens with automatic refresh via CredentialResolver."""
 
     def __init__(self):
-        self._resolver = CredentialResolver()
+        try:
+            self._resolver = CredentialResolver()
+            self._use_resolver = True
+        except FileNotFoundError:
+            logger.warning("CredentialResolver config not found - using environment variables")
+            self._resolver = None
+            self._use_resolver = False
         self._gmail_creds = None
         self._todoist_token = None
         self._amplenote_token = None
-        logger.info("AuthManager initialized (providers: %s)", self._resolver.providers())
+        if self._resolver:
+            logger.info("AuthManager initialized (providers: %s)", self._resolver.providers())
+        else:
+            logger.info("AuthManager initialized (using environment variables)")
 
     async def get_gmail_credentials(self) -> Credentials:
         """Get Gmail credentials from token.json, refreshing if expired."""
@@ -56,17 +66,26 @@ class AuthManager:
     async def get_todoist_token(self) -> str:
         """Get Todoist API token."""
         if not self._todoist_token:
-            self._todoist_token = self._resolver.get("todoist", "credentials.apiToken")
+            if self._use_resolver:
+                self._todoist_token = self._resolver.get("todoist", "credentials.apiToken")
+            else:
+                self._todoist_token = os.getenv("TODOIST_API_TOKEN", "mock-todoist-token")
         return self._todoist_token
 
     async def get_openrouter_key(self) -> str:
         """Get OpenRouter API key."""
-        return self._resolver.get("openrouter", "credentials.apiKey")
+        if self._use_resolver:
+            return self._resolver.get("openrouter", "credentials.apiKey")
+        else:
+            return os.getenv("OPENROUTER_API_KEY", "mock-openrouter-key")
 
     async def get_amplenote_token(self) -> str:
         """Get Amplenote access token."""
         if not self._amplenote_token:
-            self._amplenote_token = self._resolver.get("amplenote", "oauth.accessToken")
+            if self._use_resolver:
+                self._amplenote_token = self._resolver.get("amplenote", "oauth.accessToken")
+            else:
+                self._amplenote_token = os.getenv("AMPLENOTE_ACCESS_TOKEN", "mock-amplenote-token")
         return self._amplenote_token
 
     async def refresh_amplenote_token(self) -> str:

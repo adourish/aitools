@@ -138,7 +138,9 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive and signup keywords
+            'onedrive update', 'onedrive', 'sign up', 'signup', 'sign-up'
         ]
         
         self.reference_emails = []
