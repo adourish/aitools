@@ -49,6 +49,10 @@ class CalendarTools:
                 summary = event.get('summary', '').lower()
                 attendees = event.get('attendees', [])
 
+                # Skip OneDrive updates and signup events
+                if any(phrase in summary for phrase in ['onedrive', 'signup', 'sign up', 'registration']):
+                    continue
+
                 # Skip personal reminders (birthdays, anniversaries with no attendees)
                 if any(word in summary for word in ['birthday', 'anniversary', 'bday']):
                     if not attendees or len(attendees) <= 1:
