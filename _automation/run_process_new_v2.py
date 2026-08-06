@@ -120,6 +120,7 @@ async def process_new_comprehensive():
         logger.info(f"   Found {len(no_date_tasks)} tasks with no due date")
     
     logger.info("\n📅 STEP 5: Fetching calendar events...")
+    tomorrow_events = []
     try:
         events = await calendar.get_events(days_ahead=7)  # Get full week
         tomorrow = (today_dt + timedelta(days=1)).strftime("%Y-%m-%d")
@@ -496,6 +497,12 @@ async def process_new_comprehensive():
         # unless they contain attention keywords (cancelled, doctor, etc.)
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
+        # Events matching these keywords are skipped entirely (administrative noise)
+        skip_keywords = [
+            'signup', 'sign up', 'sign-up', 'sign-ups', 'signups',
+            'registration', 'register',
+        ]
+
         attention_keywords = [
             'cancelled', 'canceled', 'rescheduled', 'moved',
             'dr', 'doctor', 'dentist', 'appointment',
@@ -513,6 +520,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            # Skip sign-up/registration events — these are administrative noise
+            if any(kw in summary_lower for kw in skip_keywords):
+                logger.info(f"   Skipped sign-up event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
@@ -557,7 +569,6 @@ async def process_new_comprehensive():
             "monitor": [],
             "stale": [],
             "reference": [],
-            "documents": {},
             "reference_emails": gmail.reference_emails,
             "today_events": today_events,
             "tomorrow_events": tomorrow_events,
