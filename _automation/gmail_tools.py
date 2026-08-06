@@ -138,7 +138,16 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive / cloud storage notifications
+            'your onedrive', 'onedrive storage', 'onedrive is almost full',
+            'file added to onedrive', 'synced to onedrive',
+            'onedrive for business', 'microsoft onedrive',
+            # Sign-up confirmations (not actionable)
+            "you've signed up", "you have signed up",
+            "thanks for signing up", "you're now subscribed",
+            "you are now subscribed", "registration confirmed",
+            "you're now a member", "welcome to our community",
         ]
         
         self.reference_emails = []
