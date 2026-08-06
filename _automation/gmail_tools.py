@@ -40,7 +40,6 @@ class GmailTools:
     def __init__(self, auth_manager):
         self.auth_manager = auth_manager
         
-        # Reference email patterns (important info to save)
         self.reference_patterns = [
             'account number', 'account #', 'account:', 'acct #',
             'confirmation number', 'confirmation code', 'confirmation #',
@@ -53,7 +52,6 @@ class GmailTools:
             'hoa', 'homeowners association', 'property account'
         ]
         
-        # High-priority whitelisted domains (NEVER filter these)
         self.whitelist_domains = [
             'fcps.edu',
             'fairfaxcounty.gov',
@@ -65,7 +63,6 @@ class GmailTools:
             'padi.com',
         ]
         
-        # Skip patterns for unimportant emails
         self.skip_senders = [
             'tiktok.com',
             'marketing@', 'promo@', 'newsletter@',
@@ -99,13 +96,12 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
-            'fool.com', 'motleyfool.com', 'tom gardner'
+            'fool.com', 'motleyfool.com', 'tom gardner',
+            # Sign-up pressure emails
+            'use.ai',
         ]
         
-        # High-priority keywords (ALWAYS include if present)
         self.priority_keywords = [
             'school closed', 'school closing', 'schools closed',
             'school delay', 'two-hour delay', 'early dismissal',
@@ -127,7 +123,7 @@ class GmailTools:
             # Promotional/sales keywords
             'deal ends', 'wish list', 'sale', 'discount',
             'trade up', 'own apple for less',
-            'view as a web page', 'membership now',
+            'view as a web page',
             'newness for your littles', 'latest and greatest',
             # Savings/deals
             'instant savings', 'save up to', 'up to $', 'off before',
@@ -160,11 +156,9 @@ class GmailTools:
         """Check if email is from important sender"""
         sender_lower = sender.lower()
         
-        # Whitelisted senders are always important
         if self.is_whitelisted_sender(sender):
             return True
         
-        # Check skip patterns
         for skip_pattern in self.skip_senders:
             if skip_pattern in sender_lower:
                 return False
@@ -177,11 +171,9 @@ class GmailTools:
     
     def is_unimportant_email(self, subject: str, body: str, sender: str = '') -> bool:
         """Check if email is shipping/delivery notification or generic newsletter"""
-        # Whitelisted senders are NEVER unimportant
         if self.is_whitelisted_sender(sender):
             return False
         
-        # Priority content is NEVER unimportant
         if self.has_priority_content(subject, body):
             return False
         
@@ -206,7 +198,6 @@ class GmailTools:
             
             messages = results.get('messages', [])
             
-            # Get full message details
             detailed_messages = []
             for msg in messages:
                 message = service.users().messages().get(
@@ -250,7 +241,6 @@ class GmailTools:
             from_email = next((h['value'] for h in headers if h['name'] == 'From'), 'Unknown')
             date = next((h['value'] for h in headers if h['name'] == 'Date'), 'Unknown')
             
-            # Get body - try text/plain first, then HTML
             body = ''
             html_body = ''
             
@@ -282,13 +272,11 @@ class GmailTools:
                 else:
                     body = decoded
             
-            # If no plain text, extract from HTML
             if not body and html_body:
                 try:
                     parser = HTMLTextExtractor()
                     parser.feed(html_body)
                     body = parser.get_text()
-                    # Clean up whitespace
                     body = re.sub(r'\s+', ' ', body).strip()
                 except Exception as e:
                     logger.warning(f"Could not parse HTML for message {message_id}: {e}")
@@ -312,7 +300,6 @@ class GmailTools:
 
         messages = await self.search(query, max_results=100)
 
-        # Supplemental query: whitelisted domains bypass noreply filter
         whitelist_query = '(' + ' OR '.join(f'from:{d}' for d in self.whitelist_domains) + f') newer_than:{days}d'
         whitelist_messages = await self.search(whitelist_query, max_results=50)
         seen_ids = {m['id'] for m in messages}
@@ -325,23 +312,19 @@ class GmailTools:
         self.reference_emails = []
         
         for msg in messages:
-            # Get full message for better filtering
             full_msg = await self.get_email(msg['id'])
             subject = full_msg.get('subject', '')
             body = full_msg.get('body', '')
             sender = full_msg.get('from', '')
             
-            # Skip unimportant senders FIRST (before any other checks)
             if not self.is_important_sender(sender):
                 continue
             
-            # Skip unimportant emails (now considers sender and priority content)
             if self.is_unimportant_email(subject, body, sender):
                 continue
             
             text = (subject + ' ' + body).lower()
             
-            # Check if this is a reference email (save silently, don't treat as urgent)
             if self.is_reference_email(subject, body):
                 self.reference_emails.append({
                     'subject': subject,
@@ -350,20 +333,16 @@ class GmailTools:
                     'date': full_msg.get('date', ''),
                     'id': full_msg.get('id', '')
                 })
-                # Reference-only emails (confirmations, account numbers) are NOT urgent
-                # unless they also contain actionable content
                 if not self.has_priority_content(subject, body) and not any(
                     word in (subject + ' ' + body).lower()
                     for word in ['urgent', 'asap', 'action required', 'respond', 'deadline']
                 ):
                     continue
 
-            # Whitelisted senders or priority content = always urgent
             if self.is_whitelisted_sender(sender) or self.has_priority_content(subject, body):
                 urgent.append(full_msg)
                 continue
             
-            # Check urgency keywords for important senders
             is_urgent = any(word in text for word in [
                 'urgent', 'asap', 'today', 'deadline', 'due',
                 'important', 'action required', 'respond', 'confirm'
