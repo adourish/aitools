@@ -99,6 +99,8 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
+            # Microsoft notification emails (OneDrive sync, etc.)
+            'infomail.microsoft.com',
             # School/PTA promotional emails
             'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
@@ -138,7 +140,9 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up/registration emails
+            'sign up', 'signup', 'sign-up', 'register now'
         ]
         
         self.reference_emails = []
