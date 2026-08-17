@@ -2,8 +2,8 @@
 
 **Fully Autonomous Holistic Daily Planning: Gmail + Calendar + Todoist → Prioritized Daily Plan**
 
-**Last Updated:** April 9, 2026
-**Version:** 3.0.0 - AI Thread Analysis with Content Quality
+**Last Updated:** August 17, 2026
+**Version:** 3.1.0 - AI Thread Analysis with Content Quality (gpt-4o, no OneDrive)
 
 ## Quick Reference
 **Use when:** Morning planning session; need a prioritized action list pulled from email/calendar/tasks
@@ -38,7 +38,7 @@ Gmail (30 days) + Calendar (7 days) + Todoist
   └─────┬──────┘
         │ ~13 clustered groups
   ┌─────┴──────┐
-  │ AI         │  OpenRouter (gpt-4o-mini) per thread:
+  │ AI         │  OpenRouter (gpt-4o) per thread:
   │ Analysis   │  → ACTION ITEMS, DEADLINE (YYYY-MM-DD), PRIORITY,
   │            │  → CONTEXT (specific, not filler), FOLLOW_UP
   └─────┬──────┘
@@ -126,11 +126,9 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 
 **Inputs:**
 - 📧 **Gmail emails** (past 1 month) - personal email, intelligent filtering
-- � **Google Calendar events** (next 7 days) - upcoming meetings and appointments
+- 📅 **Google Calendar events** (next 7 days) - upcoming meetings and appointments
 - 📋 **Todoist tasks** - active tasks with priorities
 - 📄 **Google Drive documents** - recently modified files (last 7 days)
-- � **Outlook/Microsoft 365 emails** (past 1 month) - work email (requires admin approval)
-- �📄 **SharePoint documents** - recently accessed work files (requires admin approval)
 
 **Intelligent Processing:**
 - 🧠 **AI-powered email analysis** - Detects actionable items vs spam/newsletters
@@ -186,14 +184,9 @@ This system creates a **smart daily Kanban board** that aggregates your importan
 - Google Drive (7 days of documents) - OAuth auto-handled
 - Todoist (all active tasks) - API token in environments.json
 
-**❌ REQUIRES ADMIN APPROVAL:**
-- Microsoft 365 Outlook (work email) - Blocked by organization policy
-- SharePoint (work documents) - Blocked by organization policy
-
 **OAuth Credentials Location:**
 - Gmail/Calendar/Drive: `G:\My Drive\03_Areas\Keys\Gmail\credentials.json`
 - Gmail Token: `G:\My Drive\03_Areas\Keys\Gmail\token.json` (auto-refreshed)
-- Microsoft 365: `G:\My Drive\03_Areas\Keys\Microsoft365\` (requires IT approval)
 
 **OAuth Scopes:**
 ```python
@@ -250,16 +243,16 @@ GMAIL_SCOPES = [
         │     1. Data Collection (daily_planner.py)│
         └─────────────────────────────────────────┘
                               │
-        ┌─────────┬───────────┼───────────┬─────────┬─────────┐
-        │         │           │           │         │         │
-        ▼         ▼           ▼           ▼         ▼         ▼
-   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
-   │ Gmail  │ │Outlook │ │Todoist │ │ Google │ │SharePt │ │Calendar│
-   │  API   │ │MS Graph│ │ API v1 │ │ Drive  │ │MS Graph│ │(Future)│
-   │Personal│ │  Work  │ │ Tasks  │ │  Docs  │ │  Docs  │ │        │
-   └────────┘ └────────┘ └────────┘ └────────┘ └────────┘ └────────┘
-        │         │           │           │         │         │
-        └─────────┴───────────┴───────────┴─────────┴─────────┘
+        ┌─────────┬───────────┬───────────┐
+        │         │           │           │
+        ▼         ▼           ▼           ▼
+   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+   │ Gmail  │ │Todoist │ │ Google │ │Calendar│
+   │  API   │ │ API v1 │ │ Drive  │ │  API   │
+   │Personal│ │ Tasks  │ │  Docs  │ │ Events │
+   └────────┘ └────────┘ └────────┘ └────────┘
+        │         │           │           │
+        └─────────┴───────────┴───────────┘
                               │
                               ▼
         ┌─────────────────────────────────────────┐
