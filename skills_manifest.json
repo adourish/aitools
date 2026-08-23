@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-03-31",
-  "total_skills": 39,
+  "last_updated": "2026-08-23",
+  "total_skills": 40,
   "categories": {
     "automation": 8,
-    "integrations": 5,
+    "integrations": 6,
     "development": 7,
     "documentation": 10,
     "system": 9
@@ -964,7 +964,7 @@
     },
     {
       "id": "e2e_testing",
-      "name": "E2E Testing — Salesforce + Playwright",
+      "name": "E2E Testing \u2014 Salesforce + Playwright",
       "path": "development/skill_e2e_testing.md",
       "category": "development",
       "tags": [
@@ -1010,7 +1010,7 @@
         "pr",
         "dod"
       ],
-      "description": "Definition of Done — update feature docs, create handoff, commit, push, and create PR",
+      "description": "Definition of Done \u2014 update feature docs, create handoff, commit, push, and create PR",
       "command": "Follow 4-phase DoD process in skill",
       "frequency": "per-feature",
       "difficulty": "intermediate",
@@ -1063,6 +1063,36 @@
         "ADO Effort field patches"
       ],
       "time_estimate": "5-15 minutes"
+    },
+    {
+      "id": "keepass_lookup",
+      "name": "KeePass Lookup (automation vault)",
+      "path": ".claude/skills/keepass-lookup/SKILL.md",
+      "category": "integrations",
+      "tags": [
+        "keepass",
+        "credentials",
+        "secrets",
+        "vault",
+        "tokens",
+        "automation"
+      ],
+      "description": "Read credentials from the automation KeePass vault (key file, no master password) instead of hardcoding them",
+      "command": "python _tools/keepass/keepass_lookup.py doctor",
+      "frequency": "as-needed",
+      "difficulty": "beginner",
+      "dependencies": [
+        "pykeepass"
+      ],
+      "related_skills": [
+        "keepass_integration",
+        "environments_credentials"
+      ],
+      "outputs": [
+        "Credential field on stdout",
+        "Redacted entry listing"
+      ],
+      "time_estimate": "instant"
     }
   ],
   "quick_lookup": {
