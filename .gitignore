@@ -32,6 +32,12 @@ output/
 daily_plans/
 
 # Credentials — never commit
+# KeePass vault + key file live outside the repo (~/keys or C:\keys) — never here
+*.kdbx
+*.kdbx.lock
+*.keyfile
+keys/
+.keepass/
 credentials.json
 token.json
 environments.json

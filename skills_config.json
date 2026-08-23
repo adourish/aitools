@@ -25,5 +25,33 @@
     "skills_format": "${SKILLS_ROOT}/automation/skill_daily_planning.md",
     "para_format": "${PARA_ROOT}/03_Areas/Keys/Environments/environments.json",
     "actual_example": "If SKILLS_ROOT is 'C:\\Skills' and PARA_ROOT is 'C:\\GoogleDrive', then paths become 'C:\\Skills\\automation\\skill_daily_planning.md' and 'C:\\GoogleDrive\\03_Areas\\Keys\\Environments\\environments.json'"
+  },
+  "KEEPASS": {
+    "description": "Automation KeePass vault \u2014 unlocked with a key file, no master password. Read via _tools/keepass/keepass_lookup.py. Never commit the database or the key file.",
+    "env_overrides": [
+      "KEEPASS_DB",
+      "KEEPASS_KEY"
+    ],
+    "database_search_order": [
+      "$KEEPASS_DB",
+      "~/keys/automation-keys.kdbx",
+      "C:\\keys\\automation-keys.kdbx",
+      "G:\\My Drive\\Areas\\Keys\\automation-keys.kdbx"
+    ],
+    "keyfile_search_order": [
+      "$KEEPASS_KEY",
+      "<database folder>/automation-keys.keyfile",
+      "~/.keepass/automation-keys.keyfile",
+      "C:\\keys\\automation-keys.keyfile"
+    ],
+    "groups": [
+      "Salesforce",
+      "API",
+      "Database",
+      "DevOps",
+      "Other",
+      "aitools-environments"
+    ],
+    "helper": "_tools/keepass/keepass_lookup.py"
   }
 }
