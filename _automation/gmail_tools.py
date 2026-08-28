@@ -71,6 +71,7 @@ class GmailTools:
             'marketing@', 'promo@', 'newsletter@',
             'redditmail.com', 'email.monarch.com', 'rescueme.org',
             'membershipto', 'bankofamerica.com',
+            'onedrive',
             'ealerts.', 'USPSInformeddelivery', 'schwab.com',
             'creditkarma.com', 'omadahealth.com',
             'congressman', 'senator', 'representative', 'house.gov',
@@ -138,7 +139,13 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up confirmations
+            "you've signed up", 'you have signed up', 'successfully signed up',
+            'thanks for signing up', 'thanks for registering',
+            'thank you for signing up', 'confirm your registration',
+            'signup confirmation', 'you are now registered',
+            "you're registered", 'welcome to your new account',
         ]
         
         self.reference_emails = []
