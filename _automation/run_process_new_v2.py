@@ -17,7 +17,6 @@ from gmail_thread_tools import GmailThreadTools
 from comprehensive_analyzer import ComprehensiveAnalyzer
 from todoist_tools import TodoistTools
 from calendar_tools import CalendarTools
-from amplenote_tools import AmplenoteTools
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,7 +38,6 @@ async def process_new_comprehensive():
     analyzer = ComprehensiveAnalyzer(auth_manager)
     todoist = TodoistTools(auth_manager)
     calendar = CalendarTools(auth_manager)
-    amplenote = AmplenoteTools(auth_manager)
     
     # Step 1: Fetch email threads from last 2 weeks
     logger.info("\n📧 STEP 1: Fetching email threads (30 day lookback)...")
@@ -122,10 +120,8 @@ async def process_new_comprehensive():
     logger.info("\n📅 STEP 5: Fetching calendar events...")
     try:
         events = await calendar.get_events(days_ahead=7)  # Get full week
-        tomorrow = (today_dt + timedelta(days=1)).strftime("%Y-%m-%d")
         today_events = [e for e in events if e.get('date') == today]
-        tomorrow_events = [e for e in events if e.get('date') == tomorrow]
-        logger.info(f"   Found {len(today_events)} events today, {len(tomorrow_events)} tomorrow")
+        logger.info(f"   Found {len(today_events)} events today")
         logger.info(f"   Found {len(events)} events in next 7 days")
     except Exception as e:
         logger.warning(f"   Calendar unavailable (insufficient scopes or auth): {e}")
@@ -145,7 +141,7 @@ async def process_new_comprehensive():
     logger.info(f"{'=' * 80}")
     logger.info(f"\n{comprehensive_summary}\n")
     
-    # Step 6: Create detailed breakdown for Amplenote
+    # Step 6: Create detailed breakdown
     logger.info("\n📋 STEP 7: Preparing detailed breakdown...")
     
     detailed_breakdown = {
@@ -492,8 +488,6 @@ async def process_new_comprehensive():
             logger.info(f"   ✅ Created follow-up task (due {due_date}): {task_title[:80]}")
 
         # Create tasks for NON-ROUTINE calendar events
-        # Recurring events (regular taekwondo, cleaners, etc.) are skipped
-        # unless they contain attention keywords (cancelled, doctor, etc.)
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -546,94 +540,6 @@ async def process_new_comprehensive():
         
     except Exception as e:
         logger.error(f"   ❌ Error creating Todoist tasks: {e}")
-    
-    # Step 9: Update Amplenote with detailed analysis
-    logger.info("\n📝 STEP 9: Updating Amplenote daily note...")
-    try:
-        # Create formatted plan for Amplenote
-        amplenote_plan = {
-            "do_now": [],
-            "do_soon": [],
-            "monitor": [],
-            "stale": [],
-            "reference": [],
-            "documents": {},
-            "reference_emails": gmail.reference_emails,
-            "today_events": today_events,
-            "tomorrow_events": tomorrow_events,
-            "week_events": [e for e in events if e.get('date') != today and e.get('date') != tomorrow],
-            "stats": {
-                "threads_analyzed": len(thread_analyses),
-                "high_priority": len(detailed_breakdown['high_priority']),
-                "medium_priority": len(detailed_breakdown['medium_priority']),
-                "follow_ups": len(detailed_breakdown['follow_ups_needed']),
-                "stale_tasks": len(stale_tasks)
-            },
-            "generated_at": datetime.now().isoformat()
-        }
-        
-        # Add high priority items to do_now
-        for item in detailed_breakdown['high_priority']:
-            amplenote_plan["do_now"].append({
-                "title": item['subject'],
-                "source": "Email Thread",
-                "summary": item['summary'],
-                "outcome": item['outcome'],
-                "action_items": item['action_items'],
-                "context": item['context'],
-                "from": item['latest_from'],
-                "email_count": item['email_count'],
-                "priority": "high"
-            })
-        
-        # Add medium priority to do_soon
-        for item in detailed_breakdown['medium_priority']:
-            amplenote_plan["do_soon"].append({
-                "title": item['subject'],
-                "source": "Email Thread",
-                "summary": item['summary'],
-                "action_items": item['action_items'],
-                "priority": "medium"
-            })
-
-        # Add stale tasks to separate section (not DO NOW)
-        for task in stale_tasks:
-            days_overdue = (today_dt - datetime.strptime(task['due']['date'], "%Y-%m-%d").date()).days
-            amplenote_plan["stale"].append({
-                "title": task['content'],
-                "source": "Todoist",
-                "due": task['due']['date'],
-                "days_overdue": days_overdue,
-                "priority": "stale"
-            })
-        if stale_tasks:
-            logger.info(f"   Added {len(stale_tasks)} stale tasks to separate section")
-
-        # Add follow-up items (threads with follow_up_needed but no action_items)
-        amplenote_plan["follow_ups"] = []
-        for item in detailed_breakdown['follow_ups_needed']:
-            if not item.get('action_items'):
-                follow_up_text = item.get('follow_up', '')
-                for prefix in ('Yes - ', 'yes - ', 'YES - '):
-                    if follow_up_text.startswith(prefix):
-                        follow_up_text = follow_up_text[len(prefix):]
-                        break
-                amplenote_plan["follow_ups"].append({
-                    "title": item['subject'][:60],
-                    "follow_up": follow_up_text,
-                    "from": item.get('latest_from', '')
-                })
-        if amplenote_plan["follow_ups"]:
-            logger.info(f"   Added {len(amplenote_plan['follow_ups'])} follow-up items to Amplenote")
-
-        amplenote_success = await amplenote.update_daily_note_with_plan(amplenote_plan)
-        if amplenote_success:
-            logger.info("   ✅ Amplenote daily note updated successfully")
-        else:
-            logger.warning("   ⚠️  Could not update Amplenote daily note")
-            
-    except Exception as e:
-        logger.error(f"   ❌ Error updating Amplenote: {e}")
     
     logger.info("\n" + "=" * 80)
     logger.info("COMPREHENSIVE ANALYSIS COMPLETE")
