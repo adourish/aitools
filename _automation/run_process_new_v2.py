@@ -5,11 +5,9 @@ Analyzes email threads over 2 weeks with full context and creates single consoli
 """
 
 import asyncio
-import json
 import logging
 import argparse
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from auth_manager import AuthManager
 from gmail_tools import GmailTools
@@ -194,16 +192,6 @@ async def process_new_comprehensive():
     logger.info(f"   📧 Follow-ups needed: {len(detailed_breakdown['follow_ups_needed'])} threads")
     if stale_tasks:
         logger.info(f"   ⏳ Stale tasks (>{STALE_THRESHOLD_DAYS}d overdue): {len(stale_tasks)} — review or reschedule")
-    
-    # Step 7: Save comprehensive output
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    output_file = output_dir / f"comprehensive_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
-    with open(output_file, 'w') as f:
-        json.dump(detailed_breakdown, f, indent=2)
-    
-    logger.info(f"\n💾 Full analysis saved to: {output_file}")
     
     # Step 7.5: Deduplicate action items across analyses
     logger.info("\n🧹 STEP 7.5: Deduplicating action items...")
