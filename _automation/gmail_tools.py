@@ -71,6 +71,7 @@ class GmailTools:
             'marketing@', 'promo@', 'newsletter@',
             'redditmail.com', 'email.monarch.com', 'rescueme.org',
             'membershipto', 'bankofamerica.com',
+            'noreply@signup', 'signup@', 'register@', 'no-reply@signup',
             'ealerts.', 'USPSInformeddelivery', 'schwab.com',
             'creditkarma.com', 'omadahealth.com',
             'congressman', 'senator', 'representative', 'house.gov',
@@ -124,6 +125,12 @@ class GmailTools:
             'package', 'shipment', 'order confirmation',
             'your order', 'has shipped', 'out for delivery',
             'hanger', 'hangers', 'item has been delivered',
+            # Sign-up / registration emails
+            'sign up', 'signup', 'sign-up', 'you signed up', 'you have signed up',
+            'welcome to', 'thanks for signing up', 'thank you for signing up',
+            'thanks for registering', 'thank you for registering',
+            'complete your registration', 'confirm your email', 'verify your email',
+            'verify your account', 'activate your account', 'account created',
             # Promotional/sales keywords
             'deal ends', 'wish list', 'sale', 'discount',
             'trade up', 'own apple for less',
