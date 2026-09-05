@@ -505,6 +505,12 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        skip_event_keywords = [
+            'signup', 'sign up', 'sign-up',
+            'register', 'registration',
+            'onedrive', 'sharepoint',
+        ]
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +519,10 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            if any(kw in summary_lower for kw in skip_event_keywords):
+                logger.info(f"   Skipped event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
