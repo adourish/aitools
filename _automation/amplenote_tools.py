@@ -422,7 +422,7 @@ Format as bullet points starting with • or -. Be specific about WHO responded 
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "anthropic/claude-haiku-4-5",
+                    "model": "anthropic/claude-sonnet-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },

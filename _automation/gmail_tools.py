@@ -100,7 +100,11 @@ class GmailTools:
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
             # Investment newsletters
-            'fool.com', 'motleyfool.com', 'tom gardner'
+            'fool.com', 'motleyfool.com', 'tom gardner',
+            # Membership/HOA notifications
+            'membershipto', 'notify@membershiptoolkit.com',
+            # OneDrive/SharePoint file sharing notifications
+            'onedrive.com', 'sharepoint.com', 'microsoft.com',
         ]
         
         # High-priority keywords (ALWAYS include if present)
@@ -136,7 +140,9 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive/SharePoint file sharing
+            'shared a file with you', 'onedrive update', 'sharepoint update', 'file has been shared',
         ]
         
         self.reference_emails = []

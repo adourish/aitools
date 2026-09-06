@@ -38,7 +38,7 @@ Gmail (30 days) + Calendar (7 days) + Todoist
   └─────┬──────┘
         │ ~13 clustered groups
   ┌─────┴──────┐
-  │ AI         │  OpenRouter (claude-haiku-4-5) per thread:
+  │ AI         │  OpenRouter (claude-sonnet-5) per thread:
   │ Analysis   │  → ACTION ITEMS, DEADLINE (YYYY-MM-DD), PRIORITY,
   │            │  → CONTEXT (specific, not filler), FOLLOW_UP
   └─────┬──────┘
