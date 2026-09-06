@@ -516,6 +516,12 @@ async def process_new_comprehensive():
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
+            # Skip sign-up and OneDrive/SharePoint events
+            skip_event_keywords = ['signup', 'sign up', 'sign-up', 'register', 'registration', 'onedrive', 'sharepoint']
+            if any(kw in summary_lower for kw in skip_event_keywords):
+                logger.info(f"   Skipped sign-up/OneDrive event: {summary[:60]}")
+                continue
+
             if is_recurring and not needs_attention:
                 logger.info(f"   Skipped recurring event: {summary[:60]}")
                 continue

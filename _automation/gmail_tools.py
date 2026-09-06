@@ -70,7 +70,7 @@ class GmailTools:
             'tiktok.com',
             'marketing@', 'promo@', 'newsletter@',
             'redditmail.com', 'email.monarch.com', 'rescueme.org',
-            'membershipto', 'bankofamerica.com',
+            'bankofamerica.com',
             'ealerts.', 'USPSInformeddelivery', 'schwab.com',
             'creditkarma.com', 'omadahealth.com',
             'congressman', 'senator', 'representative', 'house.gov',
@@ -99,10 +99,12 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
-            'fool.com', 'motleyfool.com', 'tom gardner'
+            'fool.com', 'motleyfool.com', 'tom gardner',
+            # Membership/HOA notifications
+            'membershipto', 'notify@membershiptoolkit.com',
+            # OneDrive/SharePoint file sharing notifications
+            'onedrive.com', 'sharepoint.com', 'microsoft.com',
         ]
         
         # High-priority keywords (ALWAYS include if present)
@@ -138,7 +140,9 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive/SharePoint file sharing
+            'shared a file with you', 'onedrive update', 'sharepoint update', 'file has been shared',
         ]
         
         self.reference_emails = []
