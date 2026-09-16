@@ -63,7 +63,7 @@ Summary:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-3-5-haiku-20241022",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 200
                 },
@@ -149,7 +149,7 @@ Task:"""
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-3-5-haiku-20241022",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100
                 },
@@ -203,7 +203,7 @@ Task:"""
             filtered_tasks = []
             for task in tasks:
                 content = task.get('content', '')
-                if not (content.startswith('🎯 TODAY:') or content.startswith('⏰ SOON:') or content.startswith('📋 Daily Plan -')):
+                if not (content.startswith('\U0001f3af TODAY:') or content.startswith('⏰ SOON:') or content.startswith('\U0001f4cb Daily Plan -')):
                     filtered_tasks.append(task)
             
             logger.info(f"Retrieved {len(filtered_tasks)} tasks from Todoist")
@@ -340,7 +340,7 @@ Task:"""
             deleted_count = 0
             for task in tasks:
                 content = task.get('content', '')
-                if content.startswith('📋 Daily Plan -') or content.startswith('🎯 TODAY:') or content.startswith('⏰ SOON:'):
+                if content.startswith('\U0001f4cb Daily Plan -') or content.startswith('\U0001f3af TODAY:') or content.startswith('⏰ SOON:'):
                     await self.delete_task(task['id'])
                     deleted_count += 1
             
@@ -379,62 +379,50 @@ Task:"""
                 due = item.get('due', 'today')
                 time_info = f" at {item['time']}" if item.get('time') else ''
                 source = item.get('source', 'Unknown')
+                thread_context = ''
                 
                 # Use existing AI summary if available, otherwise use title
                 if source == 'Email' and item.get('ai_summary'):
-                    # Build detailed task title for DakBoard visibility
                     action_task = item['ai_summary']
                     sender_name = item.get('from', '').split('<')[0].strip() if item.get('from') else 'Unknown'
                     
-                    # Add thread context snippet if available (first sentence)
                     context_snippet = ""
                     if item.get('thread_context'):
                         thread_context = item['thread_context']
-                        # Get first sentence or first 100 chars
                         first_sentence = thread_context.split('.')[0][:100]
                         if first_sentence:
                             context_snippet = f" - {first_sentence}"
                     
-                    # Create detailed title: Action | From | Context
-                    task_title = f"🎯 {action_task} (from {sender_name}){context_snippet}{time_info}"
-                    # Limit to 250 chars for readability
+                    task_title = f"\U0001f3af {action_task} (from {sender_name}){context_snippet}{time_info}"
                     if len(task_title) > 250:
                         task_title = task_title[:247] + "..."
                 else:
-                    # For non-email items, use clean title
                     clean_title = title
                     for prefix in ['RE: [External] Re: ', 'Re: ', 'RE: ', 'FW: ', 'Fwd: ', 'Fw: ']:
                         if clean_title.startswith(prefix):
                             clean_title = clean_title[len(prefix):]
                             break
-                    task_title = f"🎯 TODAY: {clean_title}{time_info}"
+                    task_title = f"\U0001f3af TODAY: {clean_title}{time_info}"
                     thread_context = item.get('thread_context', '')
                 
-                # Build detailed description with context
                 description_parts = [f"**Source:** {source}"]
                 
-                # Add sender info for emails
                 if item.get('from'):
                     description_parts.append(f"**From:** {item['from']}")
                 
-                # Add thread context if this is an email chain
                 if thread_context:
                     description_parts.append(f"\n**Thread Summary:**\n{thread_context}")
                 
-                # Add original subject if we generated a summary
                 if source == 'Email' and item.get('preview'):
                     description_parts.append(f"\n**Subject:** {title}")
                 
-                # Add email preview/body snippet
                 if item.get('preview'):
-                    preview = item['preview'][:300]  # First 300 chars
+                    preview = item['preview'][:300]
                     description_parts.append(f"\n**Preview:**\n{preview}")
                 
-                # Add date info if available
                 if item.get('date'):
                     description_parts.append(f"\n**Received:** {item['date']}")
                 
-                # Add email ID for reference
                 if item.get('email_id'):
                     description_parts.append(f"\n**Email ID:** {item['email_id']}")
                 
@@ -443,19 +431,18 @@ Task:"""
                 await self.create_task(
                     content=task_title,
                     due_string=due if due != 'today' else 'today',
-                    priority=4,  # High priority (red)
+                    priority=4,
                     description="\n".join(description_parts)
                 )
                 created_count += 1
             
             # Create individual tasks for DO SOON items (more actionable)
             if do_soon_items:
-                for item in do_soon_items[:3]:  # Top 3 upcoming items
+                for item in do_soon_items[:3]:
                     title = item['title']
                     due_date = item.get('due', '')
                     source = item.get('source', 'Unknown')
                     
-                    # Format due date for display
                     due_display = ''
                     if due_date:
                         try:
@@ -471,7 +458,7 @@ Task:"""
                         await self.create_task(
                             content=task_title,
                             due_string=due_date if due_date else 'next week',
-                            priority=2,  # Medium priority (yellow)
+                            priority=2,
                             description=f"Source: {source}\nFrom: Daily Planner\nGenerated: {datetime.now().strftime('%I:%M %p')}"
                         )
                         created_count += 1
