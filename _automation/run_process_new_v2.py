@@ -195,16 +195,6 @@ async def process_new_comprehensive():
     if stale_tasks:
         logger.info(f"   ⏳ Stale tasks (>{STALE_THRESHOLD_DAYS}d overdue): {len(stale_tasks)} — review or reschedule")
     
-    # Step 7: Save comprehensive output
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    output_file = output_dir / f"comprehensive_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
-    with open(output_file, 'w') as f:
-        json.dump(detailed_breakdown, f, indent=2)
-    
-    logger.info(f"\n💾 Full analysis saved to: {output_file}")
-    
     # Step 7.5: Deduplicate action items across analyses
     logger.info("\n🧹 STEP 7.5: Deduplicating action items...")
     thread_analyses = analyzer.deduplicate_action_items(thread_analyses)
@@ -505,6 +495,9 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        # Sign-up style events are calendar reminders, not actionable Todoist tasks
+        signup_keywords = ['signup', 'sign up', 'sign-up', 'registration', 'register for']
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -518,6 +511,11 @@ async def process_new_comprehensive():
 
             if is_recurring and not needs_attention:
                 logger.info(f"   Skipped recurring event: {summary[:60]}")
+                continue
+
+            # Skip sign-up style events (calendar reminders, not actionable tasks)
+            if any(kw in summary_lower for kw in signup_keywords):
+                logger.info(f"   Skipped sign-up event: {summary[:60]}")
                 continue
 
             task_content = summary
