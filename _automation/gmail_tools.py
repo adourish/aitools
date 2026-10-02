@@ -99,7 +99,7 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
+            # School/PTA sign-up and promotional emails
             'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
@@ -138,7 +138,13 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up/registration emails
+            'sign up', 'signup', 'sign-up', 'register now',
+            'registration open', 'registration opens', 'open registration',
+            'sign up now', 'sign up today', 'register today',
+            'registration is open', 'now open for registration',
+            'spots available', 'reserve your spot', 'claim your spot',
         ]
         
         self.reference_emails = []
