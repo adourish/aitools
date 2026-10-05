@@ -100,7 +100,7 @@ class GmailTools:
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
             # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
+            'membershiptoolkit.com', 'signupgenius.com', 'afterschool activities',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
@@ -138,7 +138,11 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up/registration emails
+            'sign up for', 'signup for', 'sign-up for',
+            'register now', 'registration for', 'volunteer signup',
+            'sign up today', 'signup today',
         ]
         
         self.reference_emails = []

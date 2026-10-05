@@ -1,6 +1,6 @@
 # Daily Planning Automation Scripts
 
-**Autonomous daily planning system that aggregates emails, calendar, tasks, and documents into a prioritized action plan.**
+**Autonomous daily planning system that aggregates emails, calendar, and tasks into a prioritized action plan.**
 
 ---
 
@@ -41,21 +41,16 @@ python run_process_new_v2.py
 - 📧 **Gmail emails** (past 1 month) - Intelligent filtering
 - 📅 **Google Calendar events** (next 7 days) - Meetings and appointments
 - ✅ **Todoist tasks** - Active tasks with priorities
-- 📄 **Google Drive documents** - Recently modified files (last 7 days)
 
 ### Processing
 - 🧠 **AI-powered email analysis** - Detects actionable items vs spam
 - 🎯 **Deadline extraction** - Parses due dates from natural language
 - ✅ **Auto-creates tasks** in Todoist AND Amplenote
 - 📝 **Auto-creates notes** in Amplenote for reference info
-- 🔍 **Missing item detection** - Flags overlooked emails
 
 ### Output
 - 🎯 **DO NOW** - Urgent & important (due today/tomorrow)
 - ⏰ **DO SOON** - Important (due this week)
-- 👁️ **MONITOR** - Awareness items (no immediate action)
-- 📌 **REFERENCE** - Important info saved
-- 📄 **CONTEXT** - Recent documents and email summary
 
 ---
 
@@ -122,7 +117,7 @@ G:\My Drive\03_Areas\Keys\Environments\environments.json
 **First-time setup:**
 1. Go to https://console.cloud.google.com/
 2. Create new project or select existing
-3. Enable Gmail API, Google Calendar API, Google Drive API
+3. Enable Gmail API, Google Calendar API
 4. Create OAuth 2.0 credentials (Desktop app)
 5. Download `credentials.json` to Keys/Gmail folder
 
@@ -136,7 +131,6 @@ G:\My Drive\03_Areas\Keys\Environments\environments.json
 [
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/calendar.readonly',
-    'https://www.googleapis.com/auth/drive.readonly'
 ]
 ```
 
@@ -162,9 +156,6 @@ G:\My Drive\03_Areas\Keys\Environments\environments.json
   },
   "calendar": {
     "days_ahead": 7
-  },
-  "drive": {
-    "days_recent": 7
   }
 }
 ```
@@ -217,7 +208,6 @@ python -c "import json; print(json.load(open('G:/My Drive/03_Areas/Keys/Environm
 - Scans Gmail (1 month, ~100-500 emails)
 - Fetches Calendar events (7 days ahead)
 - Retrieves Todoist tasks (all active)
-- Checks Google Drive (7 days recent)
 
 ### 3. Smart Filtering
 **Automatically skips:**
@@ -225,6 +215,7 @@ python -c "import json; print(json.load(open('G:/My Drive/03_Areas/Keys/Environm
 - Newsletters and marketing
 - Shipping notifications
 - Social media alerts
+- Sign-up and registration solicitations
 - Automated systems (noreply@)
 
 **Automatically includes:**
@@ -247,8 +238,6 @@ python -c "import json; print(json.load(open('G:/My Drive/03_Areas/Keys/Environm
 ### 6. Categorization
 - **DO NOW:** Due today/tomorrow OR high priority
 - **DO SOON:** Due this week OR medium priority
-- **MONITOR:** No deadline OR low priority
-- **REFERENCE:** Important info (non-actionable)
 
 ### 7. Output Generation
 - Creates/updates daily plan note in Amplenote
@@ -266,7 +255,7 @@ python -c "import json; print(json.load(open('G:/My Drive/03_Areas/Keys/Environm
 
 ### Focus on DO NOW First
 - Complete urgent items before moving to DO SOON
-- Don't worry about MONITOR until DO NOW is clear
+- Don't worry about lower-priority items until DO NOW is clear
 
 ### Keep Todoist Updated
 - Add new tasks as they come up
@@ -365,6 +354,7 @@ DEADLINE_PATTERNS = [
 
 ## Changelog
 
+- **2026-10-05:** Fix token path to 03_Areas; upgrade AI to gpt-4o; add signup filtering; remove unimplemented drive step
 - **2026-03-01:** Moved scripts from mcptools to skills repo _automation folder
 - **2026-03-01:** Created comprehensive README with setup and usage instructions
 - **2026-02-28:** Added comprehensive email analyzer with AI-powered categorization
