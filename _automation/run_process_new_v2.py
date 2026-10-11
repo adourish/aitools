@@ -9,7 +9,6 @@ import json
 import logging
 import argparse
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from auth_manager import AuthManager
 from gmail_tools import GmailTools
@@ -194,16 +193,6 @@ async def process_new_comprehensive():
     logger.info(f"   📧 Follow-ups needed: {len(detailed_breakdown['follow_ups_needed'])} threads")
     if stale_tasks:
         logger.info(f"   ⏳ Stale tasks (>{STALE_THRESHOLD_DAYS}d overdue): {len(stale_tasks)} — review or reschedule")
-    
-    # Step 7: Save comprehensive output
-    output_dir = Path(__file__).parent / "output"
-    output_dir.mkdir(exist_ok=True)
-    output_file = output_dir / f"comprehensive_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    
-    with open(output_file, 'w') as f:
-        json.dump(detailed_breakdown, f, indent=2)
-    
-    logger.info(f"\n💾 Full analysis saved to: {output_file}")
     
     # Step 7.5: Deduplicate action items across analyses
     logger.info("\n🧹 STEP 7.5: Deduplicating action items...")
@@ -494,6 +483,7 @@ async def process_new_comprehensive():
         # Create tasks for NON-ROUTINE calendar events
         # Recurring events (regular taekwondo, cleaners, etc.) are skipped
         # unless they contain attention keywords (cancelled, doctor, etc.)
+        # Sign-up events are always skipped
         logger.info("\n   Creating tasks for non-routine calendar events...")
 
         attention_keywords = [
@@ -505,6 +495,8 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        sign_up_keywords = ['sign up', 'signup', 'sign-up']
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +505,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            # Skip sign-up events entirely
+            if any(kw in summary_lower for kw in sign_up_keywords):
+                logger.info(f"   Skipped sign-up event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
