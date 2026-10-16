@@ -11,6 +11,23 @@ import re
 
 logger = logging.getLogger(__name__)
 
+# Sign-up and welcome email patterns to filter out
+_SIGNUP_KEYWORDS = {
+    'sign up', 'signup', 'signed up', 'you have signed',
+    'welcome to', 'welcome aboard', 'welcome email',
+    'your account has been created', 'account confirmed', 'account activated',
+    'account created', 'account registration',
+    'verify your email', 'confirm your email', 'confirm your account',
+    'activate your account', 'activate your email',
+    'complete your registration', 'finish setting up',
+    'you have registered', 'registration complete', 'registration confirmed',
+    'subscription confirmed', 'you are now subscribed',
+    'thank you for registering', 'thank you for signing up',
+    'thank you for creating', 'thanks for signing up',
+    'getting started with', 'get started with your',
+}
+
+
 class GmailThreadTools:
     """Tools for grouping and analyzing email threads"""
     
@@ -84,6 +101,11 @@ class GmailThreadTools:
         
         return threads
     
+    def _is_signup_email(self, subject: str, body: str) -> bool:
+        """Return True if this looks like a sign-up / welcome / account-creation email."""
+        text = (subject + ' ' + body[:400]).lower()
+        return any(kw in text for kw in _SIGNUP_KEYWORDS)
+
     def get_priority_threads(self, threads: Dict[str, List[Dict[str, Any]]], max_threads: int = 10) -> Dict[str, List[Dict[str, Any]]]:
         """
         Filter to most important threads based on:
@@ -106,6 +128,14 @@ class GmailThreadTools:
             score = 0
             latest_email = emails[-1]
             sender = latest_email.get('from', '')
+
+            # Skip sign-up / welcome / account-creation emails — not actionable
+            if self._is_signup_email(
+                latest_email.get('subject', subject),
+                latest_email.get('body', '')
+            ):
+                logger.info(f"   Skipped sign-up email: {subject[:60]}")
+                continue
 
             # Whitelisted sender = high priority
             if self.gmail.is_whitelisted_sender(sender):
