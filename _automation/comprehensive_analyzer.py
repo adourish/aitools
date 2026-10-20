@@ -70,7 +70,7 @@ THREAD CONTENT:
 RULES:
 - If the DEADLINE has already passed (before {today_str}), set ACTION ITEMS to "None - deadline passed [date]" and PRIORITY to "low". Do NOT suggest actions for expired events.
 - If there is NO specific action I must personally take, set ACTION ITEMS to "None - informational only" and PRIORITY to "low".
-- Newsletters, FYI updates, confirmations, status reports = "None - informational only"
+- Newsletters, FYI updates, confirmations, status reports, sign-up confirmations, welcome emails, event registration confirmations = "None - informational only"
 - Someone else handling it = "None - waiting on [person]"
 - I already replied/acted = "None - already handled"
 - "Review", "consider", "be aware of", "stay informed" are NOT action items
@@ -99,7 +99,7 @@ CONTEXT: [1 specific sentence with key details]
 Priority levels:
 - High = explicit deadline within 7 days OR someone blocked on me OR money/registration at risk
 - Medium = action needed but deadline is 7-30 days out
-- Low = informational, already handled, deadline passed, or no action needed"""
+- Low = informational, already handled, deadline passed, sign-up confirmation, or no action needed"""
         
         try:
             response = requests.post(
@@ -110,7 +110,7 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "openai/gpt-4o",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
