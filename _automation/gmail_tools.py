@@ -102,7 +102,11 @@ class GmailTools:
             # School/PTA promotional emails
             'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
-            'fool.com', 'motleyfool.com', 'tom gardner'
+            'fool.com', 'motleyfool.com', 'tom gardner',
+            # OneDrive/SharePoint file sharing notifications
+            'onedrive@microsoft.com', 'sharepointonline.com',
+            # Sign-up/registration confirmation emails
+            'signup@', 'register@', 'welcome@', 'registration@',
         ]
         
         # High-priority keywords (ALWAYS include if present)
@@ -138,7 +142,17 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # OneDrive/SharePoint sharing notifications
+            'shared a file with you', 'shared a folder with you',
+            'has shared a file', 'has shared a folder',
+            'invited you to collaborate on',
+            # Sign-up/registration confirmations
+            'thanks for signing up', 'welcome to the',
+            'sign up complete', 'confirm your registration',
+            'verify your email', 'verify your account',
+            'account has been created', 'registration complete',
+            'you have been registered', 'successfully registered',
         ]
         
         self.reference_emails = []
