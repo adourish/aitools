@@ -14,27 +14,27 @@ logger = logging.getLogger(__name__)
 
 class ComprehensiveAnalyzer:
     """Analyzes email threads, tasks, and calendar to provide comprehensive context"""
-    
+
     def __init__(self, auth_manager):
         self.auth_manager = auth_manager
         self.openrouter_key = None
         self._openrouter_key_loaded = False
-    
+
     async def _ensure_openrouter_key(self) -> bool:
         """Ensure OpenRouter API key is loaded from auth_manager"""
         if not self._openrouter_key_loaded:
             self.openrouter_key = await self.auth_manager.get_openrouter_key()
             self._openrouter_key_loaded = True
         return self.openrouter_key is not None
-    
+
     async def analyze_email_thread(self, emails: List[Dict[str, Any]], thread_subject: str, is_cluster: bool = False) -> Dict[str, Any]:
         """
         Analyze a complete email thread to understand context, outcomes, and action items
-        
+
         Args:
             emails: List of emails in the thread (chronologically ordered)
             thread_subject: The subject line of the thread
-            
+
         Returns:
             Dict with analysis including:
             - summary: What this conversation is about
@@ -46,10 +46,10 @@ class ComprehensiveAnalyzer:
         """
         if not await self._ensure_openrouter_key():
             return self._fallback_analysis(emails, thread_subject)
-        
+
         # Build comprehensive thread context
         thread_text = self._build_thread_context(emails)
-        
+
         # Create analysis prompt
         cluster_instruction = ""
         if is_cluster:
@@ -100,7 +100,7 @@ Priority levels:
 - High = explicit deadline within 7 days OR someone blocked on me OR money/registration at risk
 - Medium = action needed but deadline is 7-30 days out
 - Low = informational, already handled, deadline passed, or no action needed"""
-        
+
         try:
             response = requests.post(
                 "https://openrouter.ai/api/v1/chat/completions",
@@ -110,13 +110,13 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-haiku-5-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 if 'choices' in result and len(result['choices']) > 0:
@@ -128,28 +128,28 @@ Priority levels:
             else:
                 logger.warning(f"OpenRouter API error: {response.status_code} - {response.text}")
                 return self._fallback_analysis(emails, thread_subject)
-                
+
         except Exception as e:
             logger.warning(f"Thread analysis failed: {e}")
             return self._fallback_analysis(emails, thread_subject)
-    
+
     def _build_thread_context(self, emails: List[Dict[str, Any]]) -> str:
         """Build chronological thread context from emails"""
         thread_lines = []
-        
+
         for i, email in enumerate(emails, 1):
             sender = email.get('from', 'Unknown')
             date = email.get('date', 'Unknown date')
             body = email.get('body', email.get('preview', ''))[:800]  # First 800 chars
-            
+
             thread_lines.append(f"--- Email {i} ---")
             thread_lines.append(f"From: {sender}")
             thread_lines.append(f"Date: {date}")
             thread_lines.append(f"Content: {body}")
             thread_lines.append("")
-        
+
         return "\n".join(thread_lines)
-    
+
     def _parse_analysis(self, analysis_text: str, emails: List[Dict[str, Any]], thread_subject: str) -> Dict[str, Any]:
         """Parse the AI analysis response into structured data"""
         lines = analysis_text.split('\n')
@@ -224,11 +224,11 @@ Priority levels:
                     analysis['context'] += ' ' + line
 
         return analysis
-    
+
     def _fallback_analysis(self, emails: List[Dict[str, Any]], thread_subject: str) -> Dict[str, Any]:
         """Fallback analysis when AI is not available"""
         latest_email = emails[-1] if emails else {}
-        
+
         return {
             'summary': f"Email thread: {thread_subject}",
             'outcome': "Unknown - AI analysis unavailable",
@@ -243,7 +243,7 @@ Priority levels:
             'latest_sender': latest_email.get('from', 'Unknown'),
             'latest_date': latest_email.get('date', 'Unknown')
         }
-    
+
     def _normalize_action(self, action: str) -> str:
         """Normalize an action string for comparison"""
         import string
@@ -329,39 +329,39 @@ Priority levels:
     ) -> str:
         """
         Create clean summary with top 3 actions for DakBoard title
-        
+
         Returns:
             Clean string with top 3 action items only
         """
         actions = []
-        
+
         # Collect all actions with priority
         all_items = []
-        
+
         # High priority first
         for analysis in email_analyses:
             if analysis.get('action_items') and analysis['priority'] == 'high':
                 for action in analysis['action_items'][:1]:  # First action only
                     all_items.append((action, 'high'))
-        
+
         # Medium priority next
         for analysis in email_analyses:
             if analysis.get('action_items') and analysis['priority'] == 'medium':
                 for action in analysis['action_items'][:1]:
                     all_items.append((action, 'medium'))
-        
+
         # Take top 3 actions
         for action, priority in all_items[:3]:
             # Shorten if too long
             if len(action) > 70:
                 action = action[:67] + "..."
             actions.append(f"• {action}")
-        
+
         # If no actions, show count
         if not actions:
             if email_analyses:
                 return f"{len(email_analyses)} threads to review"
             else:
                 return "No urgent actions"
-        
+
         return " | ".join(actions)
