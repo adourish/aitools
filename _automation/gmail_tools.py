@@ -102,7 +102,10 @@ class GmailTools:
             # School/PTA promotional emails
             'notify@membershiptoolkit.com', 'afterschool activities',
             # Investment newsletters
-            'fool.com', 'motleyfool.com', 'tom gardner'
+            'fool.com', 'motleyfool.com', 'tom gardner',
+            # Microsoft OneDrive/SharePoint notifications
+            'onedrive', 'sharepoint', 'office365', 'microsoftonline',
+            'microsoft365', 'no-reply@microsoft.com', 'noreply@microsoft.com',
         ]
         
         # High-priority keywords (ALWAYS include if present)
