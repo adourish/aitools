@@ -30,19 +30,6 @@ class ComprehensiveAnalyzer:
     async def analyze_email_thread(self, emails: List[Dict[str, Any]], thread_subject: str, is_cluster: bool = False) -> Dict[str, Any]:
         """
         Analyze a complete email thread to understand context, outcomes, and action items
-        
-        Args:
-            emails: List of emails in the thread (chronologically ordered)
-            thread_subject: The subject line of the thread
-            
-        Returns:
-            Dict with analysis including:
-            - summary: What this conversation is about
-            - outcome: What has been resolved or decided
-            - action_items: What needs to be done
-            - follow_up_needed: Whether follow-up is required
-            - priority: Urgency level
-            - context: Full context for understanding
         """
         if not await self._ensure_openrouter_key():
             return self._fallback_analysis(emails, thread_subject)
@@ -110,7 +97,7 @@ Priority levels:
                     "Content-Type": "application/json"
                 },
                 json={
-                    "model": "openai/gpt-4o-mini",
+                    "model": "anthropic/claude-sonnet-4-5",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 700 if is_cluster else 500
                 },
@@ -273,12 +260,6 @@ Priority levels:
         """
         Remove duplicate action items across different thread analyses.
         When duplicates are found, keep the one from the higher-priority analysis.
-
-        Args:
-            analyses: List of analysis dicts with 'action_items' and 'priority'
-
-        Returns:
-            Cleaned list of analyses with duplicate actions removed
         """
         priority_order = {'high': 0, 'medium': 1, 'low': 2}
 
