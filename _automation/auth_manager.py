@@ -70,7 +70,7 @@ class AuthManager:
         return self._amplenote_token
 
     async def refresh_amplenote_token(self) -> str:
-        """Refresh Amplenote access token and persist via resolver."""
+        """Refresh Amplenote access token (in-memory only; no write-back to credential store)."""
         client_id     = self._resolver.get("amplenote", "oauth.clientId")
         refresh_token = self._resolver.get("amplenote", "oauth.refreshToken")
 
@@ -88,9 +88,6 @@ class AuthManager:
         if response.status_code == 200:
             token_data = response.json()
             self._amplenote_token = token_data['access_token']
-            self._resolver.put("amplenote", "oauth.accessToken", token_data['access_token'])
-            if 'refresh_token' in token_data:
-                self._resolver.put("amplenote", "oauth.refreshToken", token_data['refresh_token'])
             logger.info("Amplenote token refreshed (expires in %s s)", token_data.get('expires_in', '?'))
             return self._amplenote_token
         else:
