@@ -505,6 +505,12 @@ async def process_new_comprehensive():
             'flight', 'travel', 'hotel', 'checkout',
         ]
 
+        # Calendar events to always skip (sign-ups, routine registrations, OneDrive)
+        calendar_skip_keywords = [
+            'sign up', 'signup', 'sign-up', 'registration',
+            'onedrive', 'one drive', 'onedrive update',
+        ]
+
         for ei, event in enumerate(all_events_list):
             if ei in matched_event_indices:
                 continue
@@ -513,6 +519,11 @@ async def process_new_comprehensive():
             time = event.get('time', '')
             is_recurring = event.get('is_recurring', False)
             summary_lower = summary.lower()
+
+            # Always skip sign-ups, registrations, and OneDrive events
+            if any(kw in summary_lower for kw in calendar_skip_keywords):
+                logger.info(f"   Skipped sign-up/onedrive event: {summary[:60]}")
+                continue
 
             needs_attention = any(kw in summary_lower for kw in attention_keywords)
 
