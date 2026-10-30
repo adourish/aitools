@@ -16,7 +16,13 @@ from credential_resolver import CredentialResolver
 
 logger = logging.getLogger(__name__)
 
-GMAIL_TOKEN_PATH = Path(r'G:\My Drive\Areas\Keys\Gmail\token.json')
+_GMAIL_TOKEN_CANDIDATES = [
+    Path(r'G:\My Drive\Areas\Keys\Gmail\token.json'),
+    Path.home() / 'GoogleDrive' / 'Areas' / 'Keys' / 'Gmail' / 'token.json',
+    Path.home() / '.credentials' / 'gmail-token.json',
+    Path('/tmp/gmail-token.json'),
+]
+GMAIL_TOKEN_PATH = next((p for p in _GMAIL_TOKEN_CANDIDATES if p.exists()), _GMAIL_TOKEN_CANDIDATES[0])
 
 
 class AuthManager:
