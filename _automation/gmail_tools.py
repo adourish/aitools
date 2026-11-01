@@ -101,6 +101,8 @@ class GmailTools:
             'verizon', 'vzw.com', 'verizonwireless.com',
             # School/PTA promotional emails
             'notify@membershiptoolkit.com', 'afterschool activities',
+            # Sign-up / registration services
+            'signupgenius.com', 'rsvpify.com', 'membershipworks.com',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
@@ -138,7 +140,10 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up / registration emails
+            'sign up for', 'sign-up for', 'signup for',
+            'open for registration', 'registration is open',
         ]
         
         self.reference_emails = []
