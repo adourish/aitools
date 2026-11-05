@@ -138,7 +138,10 @@ class GmailTools:
             # Marketing language
             'click here to', 'shop now', 'buy now', 'order now',
             'free shipping', 'free delivery', 'no purchase necessary',
-            'terms and conditions apply', 'see details'
+            'terms and conditions apply', 'see details',
+            # Sign-up/registration promotions
+            'sign up', 'sign-up', 'signup', 'register now', 'join now',
+            'enroll now', 'get started', 'create your account',
         ]
         
         self.reference_emails = []
