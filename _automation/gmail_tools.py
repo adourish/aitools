@@ -99,8 +99,8 @@ class GmailTools:
             'zocdoc.com', 'mail5.zocdoc.com',
             # Billing notifications
             'verizon', 'vzw.com', 'verizonwireless.com',
-            # School/PTA promotional emails
-            'notify@membershiptoolkit.com', 'afterschool activities',
+            # OneDrive/SharePoint file sharing notifications
+            'onedrive', 'sharepoint',
             # Investment newsletters
             'fool.com', 'motleyfool.com', 'tom gardner'
         ]
